@@ -1,0 +1,242 @@
+/* ============================================================
+   Backtest — Backtesting Panel Styles
+   ============================================================ */
+
+.backtest-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.backtest-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---- Input form -------------------------------------------- */
+.backtest-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.backtest-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.backtest-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.backtest-field-input {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.backtest-field-input:focus {
+  border-color: var(--accent);
+}
+
+.backtest-field-select {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.backtest-run-btn {
+  grid-column: 1 / -1;
+  padding: 10px 0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.backtest-run-btn:hover {
+  opacity: 0.85;
+}
+
+.backtest-run-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- Loading state ----------------------------------------- */
+.backtest-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px;
+}
+
+.backtest-loading-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.backtest-progress-bar {
+  width: 200px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.backtest-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ---- Results ----------------------------------------------- */
+.backtest-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.backtest-results-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---- Stats grid -------------------------------------------- */
+.backtest-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.backtest-stat-card {
+  padding: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.backtest-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.backtest-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.backtest-stat-value.positive {
+  color: var(--bullish);
+}
+
+.backtest-stat-value.negative {
+  color: var(--bearish);
+}
+
+/* ---- Equity curve chart ------------------------------------ */
+.backtest-chart {
+  height: 200px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* ---- Trade table ------------------------------------------- */
+.backtest-trades-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.backtest-trades-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: block;
+}
+
+.backtest-trades-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.backtest-trades-table th {
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  background: var(--card-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.backtest-trades-table td {
+  padding: 5px 8px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(30, 30, 46, 0.3);
+  font-family: 'Courier New', monospace;
+}
+
+.backtest-trades-table tr:nth-child(even) {
+  background: rgba(18, 18, 26, 0.2);
+}
+
+/* ---- Export buttons ---------------------------------------- */
+.backtest-export-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.backtest-export-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.backtest-export-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}

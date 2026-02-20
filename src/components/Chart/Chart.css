@@ -1,0 +1,203 @@
+/* ============================================================
+   Chart — Main Chart Panel Styles
+   ============================================================ */
+
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Chart Toolbar ----------------------------------------- */
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.chart-pair-selector {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chart-pair-selector:focus {
+  border-color: var(--accent);
+}
+
+/* ---- Timeframe buttons ------------------------------------- */
+.chart-tf-group {
+  display: flex;
+  gap: 2px;
+}
+
+.chart-tf-btn {
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.chart-tf-btn:hover {
+  background: rgba(108, 99, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.chart-tf-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- Indicator pills --------------------------------------- */
+.chart-indicator-pills {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.chart-indicator-pill {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.chart-indicator-pill:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.chart-indicator-pill.active {
+  background: rgba(108, 99, 255, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- Chart area -------------------------------------------- */
+.chart-main-area {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Lower indicator panel --------------------------------- */
+.chart-lower-panel {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
+
+.chart-lower-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chart-lower-tab {
+  padding: 2px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  text-transform: uppercase;
+}
+
+.chart-lower-tab:hover {
+  color: var(--text-primary);
+}
+
+.chart-lower-tab.active {
+  background: rgba(108, 99, 255, 0.12);
+  color: var(--accent);
+}
+
+.chart-lower-canvas-wrap {
+  height: 120px;
+  width: 100%;
+  position: relative;
+}
+
+/* ---- Recent trades ticker ---------------------------------- */
+.chart-trades-ticker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 3px 10px;
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.chart-trades-ticker::-webkit-scrollbar {
+  height: 2px;
+}
+
+.chart-trades-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.chart-trade-item {
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.chart-trade-item.buy {
+  color: var(--bullish);
+}
+
+.chart-trade-item.sell {
+  color: var(--bearish);
+}
+
+.chart-trade-time {
+  color: var(--text-secondary);
+  font-size: 9px;
+}
+
+/* ---- Chart loading / empty state --------------------------- */
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 13px;
+  color: var(--text-secondary);
+}

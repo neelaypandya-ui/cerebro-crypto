@@ -1,0 +1,270 @@
+/* ============================================================
+   Cerebro Crypto — App Layout (CSS Grid)
+   ============================================================ */
+
+/* ---- Panel card base style -------------------------------- */
+.panel-card {
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* ---- Trading-mode border overrides ----------------------- */
+.app-container.paper .panel-card {
+  border-color: rgba(240, 180, 41, 0.3); /* subtle yellow */
+}
+
+.app-container.live .panel-card {
+  border-color: rgba(255, 69, 96, 0.35); /* subtle red */
+}
+
+/* ============================================================
+   Grid Shell
+   ============================================================ */
+.app-container {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: 280px 1fr 320px;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "topbar   topbar   topbar"
+    "left     main     right"
+    "bottombar bottombar bottombar";
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* ============================================================
+   Top Bar — Row 1
+   ============================================================ */
+.top-bar {
+  grid-area: topbar;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  background: var(--card-surface);
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 12px;
+}
+
+/* ============================================================
+   Left Sidebar
+   ============================================================ */
+.left-sidebar {
+  grid-area: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  min-height: 0; /* allow flex children to shrink */
+}
+
+.left-sidebar .sidebar-panel {
+  flex: 1 1 50%;
+  min-height: 180px;
+  overflow-y: auto;
+}
+
+/* ============================================================
+   Main / Center Panel
+   ============================================================ */
+.main-panel {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+}
+
+.main-panel .chart-panel {
+  flex: 6;          /* ~60% */
+  min-height: 200px;
+  overflow: hidden;
+}
+
+.main-panel .strategy-panel {
+  flex: 4;          /* ~40% */
+  min-height: 140px;
+  overflow-y: auto;
+}
+
+/* ============================================================
+   Right Sidebar
+   ============================================================ */
+.right-sidebar {
+  grid-area: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.right-sidebar .right-panel {
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+}
+
+/* -- AI Assistant collapsible ------------------------------- */
+.ai-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-collapse-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.ai-collapse-toggle:hover {
+  color: var(--accent);
+}
+
+/* ============================================================
+   Bottom Tab Bar
+   ============================================================ */
+.bottom-tab-bar {
+  grid-area: bottombar;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 40px;
+  background: var(--card-surface);
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius);
+  z-index: 100;
+}
+
+.bottom-tab {
+  padding: 6px 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, color 0.15s;
+}
+
+.bottom-tab:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.bottom-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ============================================================
+   Modal / Slide-up Overlay
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal-slide-up {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  max-height: 80vh;
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow-y: auto;
+  padding: 24px;
+  animation: slideUp 0.2s ease;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+/* ---- Animations ------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ============================================================
+   Responsive — stacked layout below 1200px
+   ============================================================ */
+@media (max-width: 1200px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto auto;
+    grid-template-areas:
+      "topbar"
+      "left"
+      "main"
+      "right"
+      "bottombar";
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .left-sidebar {
+    flex-direction: row;
+    overflow-y: visible;
+    overflow-x: auto;
+  }
+
+  .left-sidebar .sidebar-panel {
+    min-width: 280px;
+    flex: 1 0 280px;
+    min-height: 240px;
+  }
+
+  .right-sidebar {
+    overflow-y: visible;
+  }
+
+  .right-sidebar .right-panel {
+    min-height: 200px;
+  }
+
+  .modal-slide-up {
+    max-width: 100%;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+}

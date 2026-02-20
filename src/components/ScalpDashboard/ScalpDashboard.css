@@ -1,0 +1,289 @@
+/* ============================================================
+   ScalpDashboard — Scalp Trading Analytics
+   ============================================================ */
+
+.scalp-dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.scalp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.scalp-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2e2e2;
+  margin: 0;
+}
+
+.scalp-tabs { display: flex; gap: 4px; }
+
+.scalp-tab {
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid #1e1e2e;
+  border-radius: 4px;
+  color: #8888aa;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.scalp-tab.active { background: rgba(108, 99, 255, 0.15); border-color: #6c63ff; color: #6c63ff; }
+.scalp-tab:hover { color: #e2e2e2; }
+
+.scalp-content { flex: 1; overflow-y: auto; }
+
+/* ---- Analytics ---- */
+.scalp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scalp-stat {
+  background: #0a0a0f;
+  border: 1px solid #1e1e2e;
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scalp-stat-label { font-size: 9px; color: #8888aa; text-transform: uppercase; letter-spacing: 0.3px; }
+.scalp-stat-value { font-size: 14px; font-weight: 700; color: #e2e2e2; }
+.scalp-stat-value.bullish { color: #00d4aa; }
+.scalp-stat-value.bearish { color: #ff4560; }
+
+.scalp-verdict {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.scalp-verdict.bullish { background: rgba(0, 212, 170, 0.08); border: 1px solid rgba(0, 212, 170, 0.2); color: #00d4aa; }
+.scalp-verdict.bearish { background: rgba(255, 69, 96, 0.08); border: 1px solid rgba(255, 69, 96, 0.2); color: #ff4560; }
+.scalp-verdict.choppy, .scalp-verdict.neutral { background: rgba(240, 180, 41, 0.08); border: 1px solid rgba(240, 180, 41, 0.2); color: #f0b429; }
+
+.scalp-paused-banner, .scalp-disabled-banner {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.scalp-paused-banner { background: rgba(240, 180, 41, 0.08); border: 1px solid rgba(240, 180, 41, 0.2); color: #f0b429; }
+.scalp-disabled-banner { background: rgba(255, 69, 96, 0.08); border: 1px solid rgba(255, 69, 96, 0.2); color: #ff4560; }
+
+.scalp-reset-btn {
+  padding: 6px 14px;
+  background: rgba(108, 99, 255, 0.1);
+  border: 1px solid rgba(108, 99, 255, 0.2);
+  border-radius: 4px;
+  color: #6c63ff;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* ---- Spread Monitor ---- */
+.scalp-spread-monitor { font-size: 11px; }
+
+.scalp-spread-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 6px 8px;
+  color: #8888aa;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid #1e1e2e;
+}
+
+.scalp-spread-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 6px 8px;
+  align-items: center;
+  border-bottom: 1px solid rgba(30, 30, 46, 0.3);
+}
+
+.scalp-spread-row.active { background: rgba(108, 99, 255, 0.06); }
+.scalp-spread-pair { font-weight: 600; color: #e2e2e2; }
+.scalp-spread-value { color: #e2e2e2; font-family: monospace; }
+
+.scalp-spread-status { display: flex; align-items: center; gap: 4px; text-transform: capitalize; }
+.scalp-spread-dot { width: 6px; height: 6px; border-radius: 50%; }
+.scalp-spread-status.green { color: #00d4aa; }
+.scalp-spread-status.green .scalp-spread-dot { background: #00d4aa; }
+.scalp-spread-status.yellow { color: #f0b429; }
+.scalp-spread-status.yellow .scalp-spread-dot { background: #f0b429; }
+.scalp-spread-status.red { color: #ff4560; }
+.scalp-spread-status.red .scalp-spread-dot { background: #ff4560; }
+.scalp-spread-status.unknown { color: #8888aa; }
+.scalp-spread-status.unknown .scalp-spread-dot { background: #8888aa; }
+
+.scalp-spread-safe.yes { color: #00d4aa; font-weight: 600; }
+.scalp-spread-safe.no { color: #ff4560; font-weight: 600; }
+
+/* ---- Trade Flow ---- */
+.scalp-flow-title { font-size: 12px; font-weight: 600; color: #e2e2e2; margin-bottom: 12px; }
+
+.scalp-flow-bar-container { margin-bottom: 12px; }
+
+.scalp-flow-bar {
+  display: flex;
+  height: 28px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.scalp-flow-buy {
+  background: rgba(0, 212, 170, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d4aa;
+  font-size: 11px;
+  font-weight: 600;
+  transition: width 0.3s;
+}
+
+.scalp-flow-sell {
+  background: rgba(255, 69, 96, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff4560;
+  font-size: 11px;
+  font-weight: 600;
+  transition: width 0.3s;
+}
+
+.scalp-flow-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.scalp-flow-label { font-size: 9px; text-transform: uppercase; font-weight: 600; }
+.scalp-flow-label.buy { color: #00d4aa; }
+.scalp-flow-label.sell { color: #ff4560; }
+
+.scalp-flow-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scalp-flow-stat {
+  background: #0a0a0f;
+  border: 1px solid #1e1e2e;
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scalp-flow-stat-label { font-size: 9px; color: #8888aa; }
+.scalp-flow-stat-value { font-size: 13px; font-weight: 600; color: #e2e2e2; }
+.scalp-flow-stat-value.bullish { color: #00d4aa; }
+.scalp-flow-stat-value.bearish { color: #ff4560; }
+.scalp-flow-stat-value.neutral { color: #f0b429; }
+
+.scalp-flow-pressure {
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.scalp-flow-pressure.bullish { background: rgba(0, 212, 170, 0.08); color: #00d4aa; }
+.scalp-flow-pressure.bearish { background: rgba(255, 69, 96, 0.08); color: #ff4560; }
+.scalp-flow-pressure.neutral { background: rgba(240, 180, 41, 0.08); color: #f0b429; }
+
+/* ---- Fee Calculator ---- */
+.scalp-fee-calc { font-size: 11px; }
+.scalp-fee-title { font-size: 12px; font-weight: 600; color: #e2e2e2; margin-bottom: 4px; }
+.scalp-fee-price { font-size: 11px; color: #8888aa; margin-bottom: 12px; }
+
+.scalp-fee-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scalp-fee-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.scalp-fee-input-row label {
+  font-size: 9px;
+  color: #8888aa;
+  text-transform: uppercase;
+}
+
+.scalp-fee-input-row input {
+  padding: 5px 8px;
+  background: #0a0a0f;
+  border: 1px solid #1e1e2e;
+  border-radius: 4px;
+  color: #e2e2e2;
+  font-size: 11px;
+  outline: none;
+}
+
+.scalp-fee-input-row input:focus { border-color: #6c63ff; }
+
+.scalp-fee-results {
+  background: #0a0a0f;
+  border: 1px solid #1e1e2e;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.scalp-fee-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 11px;
+}
+
+.scalp-fee-row span:first-child { color: #8888aa; }
+.scalp-fee-row span:last-child { color: #e2e2e2; font-weight: 600; font-family: monospace; }
+.scalp-fee-row .bullish { color: #00d4aa; }
+.scalp-fee-row .bearish { color: #ff4560; }
+.scalp-fee-row.divider { border-top: 1px solid #1e1e2e; margin-top: 4px; padding-top: 8px; }
+.scalp-fee-row.highlight span:last-child { font-size: 13px; }
+
+.scalp-fee-warning {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: rgba(255, 69, 96, 0.06);
+  border: 1px solid rgba(255, 69, 96, 0.15);
+  border-radius: 4px;
+  color: #ff4560;
+  font-size: 10px;
+}

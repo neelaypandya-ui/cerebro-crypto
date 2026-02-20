@@ -1,0 +1,304 @@
+/* ============================================================
+   OrderEntry — Order Entry Form Styles
+   ============================================================ */
+
+.order-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---- Header ------------------------------------------------ */
+.order-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.order-entry-pair {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.order-entry-price {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  color: var(--bullish);
+}
+
+/* ---- Order type tabs --------------------------------------- */
+.order-type-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.order-type-tab {
+  flex: 1;
+  padding: 5px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+}
+
+.order-type-tab:hover {
+  color: var(--text-primary);
+}
+
+.order-type-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- Side note --------------------------------------------- */
+.order-side-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 212, 170, 0.06);
+  border: 1px solid rgba(0, 212, 170, 0.15);
+}
+
+.order-side-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--bullish);
+  text-transform: uppercase;
+}
+
+.order-side-subtext {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* ---- Form fields ------------------------------------------- */
+.order-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.order-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.order-field-input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.order-field-input-wrap:focus-within {
+  border-color: var(--accent);
+}
+
+.order-field-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+}
+
+.order-field-input:focus {
+  border: none;
+  outline: none;
+}
+
+.order-field-suffix {
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(30, 30, 46, 0.5);
+  border-left: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.order-field-suffix:hover {
+  color: var(--accent);
+}
+
+/* ---- Amount toggle ----------------------------------------- */
+.order-amount-toggle {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.order-amount-toggle-btn {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.order-amount-toggle-btn.active {
+  background: rgba(108, 99, 255, 0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- Estimate --------------------------------------------- */
+.order-estimate {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.order-estimate-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.order-estimate-label {
+  color: var(--text-secondary);
+}
+
+.order-estimate-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Courier New', monospace;
+}
+
+/* ---- Validation error -------------------------------------- */
+.order-error {
+  font-size: 11px;
+  color: var(--bearish);
+  padding: 3px 0;
+}
+
+/* ---- Submit button ----------------------------------------- */
+.order-submit-btn {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  border: none;
+  background: var(--bullish);
+  color: #fff;
+}
+
+.order-submit-btn:hover {
+  opacity: 0.85;
+}
+
+.order-submit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- Live confirm modal ------------------------------------ */
+.order-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-confirm-modal {
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 400px;
+  max-width: 90vw;
+}
+
+.order-confirm-modal h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.order-confirm-details {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.order-confirm-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.order-confirm-detail-label {
+  color: var(--text-secondary);
+}
+
+.order-confirm-detail-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.order-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.order-confirm-cancel {
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.order-confirm-submit {
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--bullish);
+  border: none;
+  cursor: pointer;
+}

@@ -1,0 +1,164 @@
+/* ============================================================
+   OrderBook — Mini Order Book Styles
+   ============================================================ */
+
+.orderbook-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Header ------------------------------------------------ */
+.orderbook-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.orderbook-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.orderbook-collapse-btn {
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0 4px;
+  transition: color 0.15s;
+  line-height: 1;
+}
+
+.orderbook-collapse-btn:hover {
+  color: var(--accent);
+}
+
+/* ---- Column headers ---------------------------------------- */
+.orderbook-col-headers {
+  display: flex;
+  padding: 3px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.orderbook-col-header {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.orderbook-col-price {
+  flex: 1;
+}
+
+.orderbook-col-size {
+  width: 70px;
+  text-align: right;
+}
+
+.orderbook-col-total {
+  width: 70px;
+  text-align: right;
+}
+
+/* ---- Book body --------------------------------------------- */
+.orderbook-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ---- Row --------------------------------------------------- */
+.orderbook-row {
+  display: flex;
+  align-items: center;
+  padding: 2px 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  position: relative;
+  height: 22px;
+}
+
+.orderbook-row-depth {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  transition: width 0.2s ease;
+}
+
+.orderbook-row.ask .orderbook-row-depth {
+  background: linear-gradient(to left, var(--bearish), transparent);
+}
+
+.orderbook-row.bid .orderbook-row-depth {
+  background: linear-gradient(to left, var(--bullish), transparent);
+}
+
+.orderbook-row-price {
+  flex: 1;
+  z-index: 1;
+}
+
+.orderbook-row.ask .orderbook-row-price {
+  color: var(--bearish);
+}
+
+.orderbook-row.bid .orderbook-row-price {
+  color: var(--bullish);
+}
+
+.orderbook-row-size {
+  width: 70px;
+  text-align: right;
+  color: var(--text-primary);
+  z-index: 1;
+}
+
+.orderbook-row-total {
+  width: 70px;
+  text-align: right;
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+/* ---- Spread ------------------------------------------------ */
+.orderbook-spread {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(108, 99, 255, 0.05);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.orderbook-spread-label {
+  color: var(--text-secondary);
+  margin-right: 6px;
+}
+
+/* ---- Collapsed state --------------------------------------- */
+.orderbook-collapsed {
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+}

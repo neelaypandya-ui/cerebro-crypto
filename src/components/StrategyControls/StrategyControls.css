@@ -1,0 +1,605 @@
+/* ============================================================
+   StrategyControls — Redesigned Strategy Panel Styles
+   ============================================================ */
+
+.strategy-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  overflow-y: auto;
+  gap: 8px;
+}
+
+/* ================================================================
+   Bot Master Controls
+   ================================================================ */
+
+.bot-master {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.bot-master-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bot-master-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bot-master-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.bot-toggle-btn {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  border-radius: 11px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+
+.bot-toggle-btn.off {
+  background: #2a2a3d;
+  box-shadow: inset 0 0 0 1px rgba(136, 136, 170, 0.25);
+}
+.bot-toggle-btn.on {
+  background: var(--bullish);
+  box-shadow: 0 0 8px rgba(0, 212, 170, 0.4);
+}
+
+.bot-toggle-knob {
+  position: absolute;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.bot-toggle-btn.off .bot-toggle-knob { left: 2px; }
+.bot-toggle-btn.on .bot-toggle-knob { left: 22px; }
+
+.bot-status-text {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.bot-status-text.on { color: var(--bullish); }
+.bot-status-text.off { color: var(--text-secondary); }
+
+/* Regime Badge */
+.bot-regime-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.bot-regime-badge.bullish { background: rgba(0, 212, 170, 0.1); color: var(--bullish); }
+.bot-regime-badge.choppy { background: rgba(240, 180, 41, 0.1); color: var(--warning-yellow); }
+.bot-regime-badge.bearish { background: rgba(255, 69, 96, 0.1); color: var(--bearish); }
+
+.bot-regime-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.bot-regime-badge.bullish .bot-regime-dot { background: var(--bullish); }
+.bot-regime-badge.choppy .bot-regime-dot { background: var(--warning-yellow); }
+.bot-regime-badge.bearish .bot-regime-dot { background: var(--bearish); }
+
+.bot-regime-time {
+  font-size: 9px;
+  opacity: 0.7;
+}
+
+.bot-master-stats {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.bot-stat {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.bot-stat-num {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Emergency Stop */
+.bot-emergency-btn {
+  padding: 4px 10px;
+  background: rgba(255, 69, 96, 0.12);
+  border: 1px solid rgba(255, 69, 96, 0.3);
+  border-radius: 4px;
+  color: var(--bearish);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.bot-emergency-btn:hover {
+  background: rgba(255, 69, 96, 0.25);
+}
+
+/* Activity Log */
+.bot-activity-log {
+  margin-top: 6px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.bot-activity-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  font-size: 10px;
+  border-radius: 2px;
+}
+
+.bot-activity-entry:nth-child(odd) { background: rgba(108, 99, 255, 0.03); }
+
+.bot-activity-pair { font-weight: 600; color: var(--text-primary); min-width: 55px; }
+.bot-activity-strat { color: var(--accent); min-width: 70px; text-transform: capitalize; }
+.bot-activity-type { font-weight: 600; min-width: 36px; }
+.bot-activity-type.buy { color: var(--bullish); }
+.bot-activity-type.sell { color: var(--bearish); }
+.bot-activity-type.hold { color: var(--warning-yellow); }
+.bot-activity-time { color: var(--text-secondary); font-size: 9px; margin-left: auto; }
+
+/* ================================================================
+   Bearish Banner
+   ================================================================ */
+
+.strategy-bearish-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(255, 69, 96, 0.06);
+  border: 1px solid rgba(255, 69, 96, 0.15);
+  flex-shrink: 0;
+}
+
+.strategy-bearish-banner-icon { font-size: 16px; flex-shrink: 0; }
+.strategy-bearish-banner-text { font-size: 11px; font-weight: 600; color: var(--bearish); }
+.strategy-bearish-banner-sub { font-size: 10px; color: var(--text-secondary); }
+
+/* ================================================================
+   Scalp Session Scorecard
+   ================================================================ */
+
+.scalp-scorecard {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  flex-shrink: 0;
+}
+
+.scalp-scorecard-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.scalp-scorecard-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scalp-scorecard-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 48px;
+}
+
+.scalp-scorecard-label { font-size: 9px; color: var(--text-secondary); }
+.scalp-scorecard-value { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+.scalp-scorecard-value.bullish { color: var(--bullish); }
+.scalp-scorecard-value.bearish { color: var(--bearish); }
+
+.scalp-scorecard-alert {
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.scalp-scorecard-alert.warning {
+  background: rgba(240, 180, 41, 0.08);
+  color: var(--warning-yellow);
+  border: 1px solid rgba(240, 180, 41, 0.15);
+}
+
+.scalp-scorecard-alert.danger {
+  background: rgba(255, 69, 96, 0.08);
+  color: var(--bearish);
+  border: 1px solid rgba(255, 69, 96, 0.15);
+}
+
+/* ================================================================
+   Strategy Groups (Regime-grouped accordions)
+   ================================================================ */
+
+.strategy-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.strategy-group {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.strategy-group.other {
+  opacity: 0.65;
+}
+
+.strategy-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.strategy-group-header.bullish { background: rgba(0, 212, 170, 0.06); color: var(--bullish); }
+.strategy-group-header.choppy { background: rgba(240, 180, 41, 0.06); color: var(--warning-yellow); }
+.strategy-group-header.bearish { background: rgba(255, 69, 96, 0.06); color: var(--bearish); }
+
+.strategy-group-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.strategy-group-label { flex: 1; }
+
+.strategy-group-current-tag {
+  font-size: 8px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: currentColor;
+  color: var(--bg);
+  font-weight: 800;
+}
+
+.strategy-group-cards {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================================================
+   Strategy Card (Accordion)
+   ================================================================ */
+
+.strat-card {
+  border-top: 1px solid rgba(30, 30, 46, 0.5);
+  transition: background 0.1s;
+}
+
+.strat-card.enabled {
+  background: rgba(108, 99, 255, 0.04);
+}
+
+.strat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.strat-card-header:hover { background: rgba(108, 99, 255, 0.04); }
+
+.strat-card-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.strat-card-expand {
+  font-size: 9px;
+  color: var(--text-secondary);
+  width: 10px;
+  flex-shrink: 0;
+}
+
+.strat-card-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.strat-card-regime-tag {
+  font-size: 8px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--accent);
+  text-transform: capitalize;
+}
+
+.strat-card-signal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bullish);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.strat-card-right {
+  flex-shrink: 0;
+}
+
+.strat-card-toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  padding: 0;
+}
+
+.strat-card-toggle.off {
+  background: #2a2a3d;
+  box-shadow: inset 0 0 0 1px rgba(136, 136, 170, 0.25);
+}
+.strat-card-toggle.on {
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(108, 99, 255, 0.4);
+}
+
+.strat-card-toggle-knob {
+  position: absolute;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.strat-card-toggle.off .strat-card-toggle-knob { left: 3px; }
+.strat-card-toggle.on .strat-card-toggle-knob { left: 19px; }
+
+/* Summary */
+.strat-card-summary {
+  padding: 0 10px 6px 26px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* Expanded Details */
+.strat-card-details {
+  padding: 4px 10px 10px 26px;
+  border-top: 1px dashed rgba(30, 30, 46, 0.4);
+}
+
+.strat-card-section {
+  margin-bottom: 8px;
+}
+
+.strat-card-section-title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+
+.strat-card-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.strat-card-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-primary);
+  line-height: 1.4;
+  padding: 1px 0;
+}
+
+.strat-card-check-icon {
+  color: var(--accent);
+  font-size: 8px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.strat-card-tickers {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.strat-card-ticker-tag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--bullish);
+  font-weight: 600;
+}
+
+.strat-card-tf-tag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(108, 99, 255, 0.08);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.strat-card-signal-status {
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 3px;
+}
+
+.strat-card-signal-status.active {
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--bullish);
+}
+
+.strat-card-signal-status.idle {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ================================================================
+   Engine Status Badge
+   ================================================================ */
+
+.engine-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-left: 4px;
+}
+
+.engine-status-badge.running { background: rgba(0, 212, 170, 0.1); color: var(--bullish); }
+.engine-status-badge.paused { background: rgba(240, 180, 41, 0.1); color: var(--warning-yellow); }
+.engine-status-badge.idle { background: rgba(136, 136, 170, 0.1); color: var(--text-secondary); }
+.engine-status-badge.error { background: rgba(255, 69, 96, 0.1); color: var(--bearish); }
+
+.engine-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.engine-status-badge.running .engine-status-dot {
+  animation: pulse 1.5s infinite;
+}
+
+.engine-eval-time {
+  font-size: 8px;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* ================================================================
+   Engine Log
+   ================================================================ */
+
+.engine-log {
+  margin-top: 6px;
+  border-top: 1px solid var(--border);
+  padding-top: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.engine-log-title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  margin-bottom: 3px;
+}
+
+.engine-log-entry {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 4px;
+  font-size: 9px;
+  border-radius: 2px;
+}
+
+.engine-log-entry:nth-child(odd) { background: rgba(108, 99, 255, 0.02); }
+
+.engine-log-type {
+  font-weight: 700;
+  min-width: 52px;
+  text-transform: uppercase;
+  font-size: 8px;
+}
+
+.engine-log-signal .engine-log-type { color: var(--bullish); }
+.engine-log-execute .engine-log-type { color: var(--accent); }
+.engine-log-blocked .engine-log-type { color: var(--bearish); }
+.engine-log-skip .engine-log-type { color: var(--warning-yellow); }
+.engine-log-error .engine-log-type { color: var(--bearish); }
+
+.engine-log-msg {
+  flex: 1;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.engine-log-time {
+  color: var(--text-secondary);
+  font-size: 8px;
+  flex-shrink: 0;
+}

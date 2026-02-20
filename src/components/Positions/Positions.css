@@ -1,0 +1,191 @@
+/* ============================================================
+   Positions — Open Positions Panel Styles
+   ============================================================ */
+
+.positions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ---- Header ------------------------------------------------ */
+.positions-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.positions-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.positions-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 5px;
+}
+
+/* ---- Position card ----------------------------------------- */
+.position-card {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  transition: border-color 0.15s;
+}
+
+.position-card.near-stop {
+  border-color: rgba(255, 69, 96, 0.5);
+  animation: pos-flash-red 1s infinite;
+}
+
+@keyframes pos-flash-red {
+  0%, 100% { background: var(--bg); }
+  50% { background: rgba(255, 69, 96, 0.05); }
+}
+
+.position-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.position-pair {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.position-side {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--bullish);
+  margin-left: 6px;
+}
+
+.position-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  border: none;
+  background: transparent;
+}
+
+.position-close-btn:hover {
+  background: rgba(255, 69, 96, 0.15);
+  color: var(--bearish);
+}
+
+/* ---- Details grid ------------------------------------------ */
+.position-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px 10px;
+  font-size: 11px;
+}
+
+.position-detail {
+  display: flex;
+  justify-content: space-between;
+}
+
+.position-detail-label {
+  color: var(--text-secondary);
+}
+
+.position-detail-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Courier New', monospace;
+}
+
+.position-detail-value.positive {
+  color: var(--bullish);
+}
+
+.position-detail-value.negative {
+  color: var(--bearish);
+}
+
+/* ---- Stop-loss inline edit --------------------------------- */
+.position-sl-input {
+  width: 70px;
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  text-align: right;
+}
+
+.position-sl-input:focus {
+  border-color: var(--bearish);
+}
+
+/* ---- Levels ------------------------------------------------ */
+.position-levels {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+}
+
+.position-level {
+  display: flex;
+  gap: 3px;
+}
+
+.position-level-label {
+  color: var(--text-secondary);
+}
+
+.position-level-value {
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.position-level-value.sl {
+  color: var(--bearish);
+}
+
+.position-level-value.tp {
+  color: var(--bullish);
+}
+
+/* ---- Empty state ------------------------------------------- */
+.positions-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}

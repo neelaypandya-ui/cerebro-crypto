@@ -1,0 +1,314 @@
+/* ============================================================
+   TopBar — Navigation Bar Styles
+   ============================================================ */
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 48px;
+  padding: 0 4px;
+}
+
+/* ---- Logo -------------------------------------------------- */
+.topbar-logo {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.topbar-logo-cerebro {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+.topbar-logo-crypto {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+}
+
+/* ---- Regime badge ------------------------------------------ */
+.topbar-regime-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.topbar-regime-badge.bullish {
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--bullish);
+}
+
+.topbar-regime-badge.choppy {
+  background: rgba(240, 180, 41, 0.12);
+  color: var(--warning-yellow);
+}
+
+.topbar-regime-badge.bearish {
+  background: rgba(255, 69, 96, 0.12);
+  color: var(--bearish);
+}
+
+.topbar-regime-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.topbar-regime-badge.bullish .topbar-regime-dot {
+  background: var(--bullish);
+}
+
+.topbar-regime-badge.choppy .topbar-regime-dot {
+  background: var(--warning-yellow);
+}
+
+.topbar-regime-badge.bearish .topbar-regime-dot {
+  background: var(--bearish);
+}
+
+/* ---- Divider ----------------------------------------------- */
+.topbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* ---- Portfolio Summary ------------------------------------- */
+.topbar-portfolio {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.topbar-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.topbar-stat-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.topbar-stat-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.topbar-stat-value.positive {
+  color: var(--bullish);
+}
+
+.topbar-stat-value.negative {
+  color: var(--bearish);
+}
+
+/* ---- Right actions ----------------------------------------- */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ---- Mode badge -------------------------------------------- */
+.topbar-mode-badge {
+  padding: 3px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  border: none;
+}
+
+.topbar-mode-badge:hover {
+  opacity: 0.85;
+}
+
+.topbar-mode-badge.paper {
+  background: rgba(240, 180, 41, 0.2);
+  color: var(--warning-yellow);
+  border: 1px solid rgba(240, 180, 41, 0.3);
+}
+
+.topbar-mode-badge.live {
+  background: rgba(255, 69, 96, 0.2);
+  color: var(--bearish);
+  border: 1px solid rgba(255, 69, 96, 0.3);
+}
+
+/* ---- WS Status --------------------------------------------- */
+.topbar-ws-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.topbar-ws-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.topbar-ws-dot.connected {
+  background: var(--bullish);
+  box-shadow: 0 0 6px rgba(0, 212, 170, 0.5);
+}
+
+.topbar-ws-dot.reconnecting {
+  background: var(--warning-yellow);
+  box-shadow: 0 0 6px rgba(240, 180, 41, 0.5);
+  animation: ws-pulse 1.5s infinite;
+}
+
+.topbar-ws-dot.disconnected {
+  background: var(--bearish);
+  box-shadow: 0 0 6px rgba(255, 69, 96, 0.5);
+}
+
+@keyframes ws-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ---- Settings button --------------------------------------- */
+.topbar-settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.topbar-settings-btn:hover {
+  background: rgba(108, 99, 255, 0.1);
+  color: var(--accent);
+}
+
+/* ---- Confirmation Modal ------------------------------------ */
+.topbar-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.topbar-confirm-modal {
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  width: 420px;
+  max-width: 90vw;
+}
+
+.topbar-confirm-modal h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--bearish);
+}
+
+.topbar-confirm-modal p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.topbar-confirm-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.topbar-confirm-input:focus {
+  border-color: var(--bearish);
+}
+
+.topbar-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.topbar-confirm-cancel {
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.topbar-confirm-cancel:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.topbar-confirm-submit {
+  padding: 7px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--bearish);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.topbar-confirm-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.topbar-confirm-submit:not(:disabled):hover {
+  opacity: 0.85;
+}

@@ -1,0 +1,244 @@
+/* ============================================================
+   AlertManager — Alert Management Panel Styles
+   ============================================================ */
+
+.alertmanager-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alertmanager-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---- Create alert form ------------------------------------- */
+.alertmanager-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.alertmanager-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.alertmanager-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.alertmanager-field-input {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.alertmanager-field-input:focus {
+  border-color: var(--accent);
+}
+
+.alertmanager-field-select {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.alertmanager-create-btn {
+  grid-column: 1 / -1;
+  padding: 8px 0;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.alertmanager-create-btn:hover {
+  opacity: 0.85;
+}
+
+/* ---- Sections ---------------------------------------------- */
+.alertmanager-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ---- Alerts table ------------------------------------------ */
+.alertmanager-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.alertmanager-table th {
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.alertmanager-table td {
+  padding: 6px 8px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(30, 30, 46, 0.3);
+}
+
+.alertmanager-table tr:nth-child(even) {
+  background: rgba(18, 18, 26, 0.2);
+}
+
+.alertmanager-table tr:hover {
+  background: rgba(108, 99, 255, 0.04);
+}
+
+/* ---- Status badge ------------------------------------------ */
+.alertmanager-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.alertmanager-status.active {
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--bullish);
+}
+
+.alertmanager-status.inactive {
+  background: rgba(136, 136, 170, 0.12);
+  color: var(--text-secondary);
+}
+
+.alertmanager-status.triggered {
+  background: rgba(240, 180, 41, 0.12);
+  color: var(--warning-yellow);
+}
+
+/* ---- Action buttons ---------------------------------------- */
+.alertmanager-action-btn {
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.12s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.alertmanager-action-btn:hover {
+  opacity: 0.8;
+}
+
+.alertmanager-action-btn.delete {
+  color: var(--bearish);
+  border-color: rgba(255, 69, 96, 0.3);
+}
+
+.alertmanager-action-btn.delete:hover {
+  background: rgba(255, 69, 96, 0.08);
+}
+
+.alertmanager-action-btn.toggle {
+  color: var(--accent);
+  border-color: rgba(108, 99, 255, 0.3);
+}
+
+/* ---- Alert history ----------------------------------------- */
+.alertmanager-history {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.alertmanager-history-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(30, 30, 46, 0.3);
+}
+
+.alertmanager-history-row:nth-child(even) {
+  background: rgba(18, 18, 26, 0.15);
+}
+
+.alertmanager-history-time {
+  font-size: 10px;
+  color: var(--text-secondary);
+  min-width: 70px;
+}
+
+.alertmanager-history-pair {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 60px;
+}
+
+.alertmanager-history-message {
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.alertmanager-history-type {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.alertmanager-history-type.price {
+  background: rgba(108, 99, 255, 0.12);
+  color: var(--accent);
+}
+
+.alertmanager-history-type.indicator {
+  background: rgba(240, 180, 41, 0.12);
+  color: var(--warning-yellow);
+}
+
+.alertmanager-history-type.strategy {
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--bullish);
+}
+
+/* ---- Empty state ------------------------------------------- */
+.alertmanager-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}

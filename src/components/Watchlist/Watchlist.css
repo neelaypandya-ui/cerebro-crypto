@@ -1,0 +1,273 @@
+/* ============================================================
+   Watchlist — Left Sidebar Styles
+   ============================================================ */
+
+.watchlist-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Header / Search --------------------------------------- */
+.watchlist-header {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.watchlist-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.watchlist-search {
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.watchlist-search::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ---- Column headers ---------------------------------------- */
+.watchlist-col-headers {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.watchlist-col-header {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transition: color 0.15s;
+}
+
+.watchlist-col-header:hover {
+  color: var(--text-primary);
+}
+
+.watchlist-col-header.active {
+  color: var(--accent);
+}
+
+.watchlist-col-star {
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.watchlist-col-pair {
+  flex: 1;
+}
+
+.watchlist-col-price {
+  width: 80px;
+  text-align: right;
+}
+
+.watchlist-col-change {
+  width: 65px;
+  text-align: right;
+}
+
+.watchlist-sort-arrow {
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+/* ---- List area --------------------------------------------- */
+.watchlist-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ---- Watchlist Row ----------------------------------------- */
+.watchlist-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.watchlist-row:hover {
+  background: rgba(108, 99, 255, 0.05);
+}
+
+.watchlist-row.active {
+  background: rgba(108, 99, 255, 0.08);
+  border-left-color: var(--accent);
+}
+
+/* Price flash animations */
+.watchlist-row.flash-green {
+  animation: wl-flash-green 0.6s ease;
+}
+
+.watchlist-row.flash-red {
+  animation: wl-flash-red 0.6s ease;
+}
+
+@keyframes wl-flash-green {
+  0% { background: rgba(0, 212, 170, 0.2); }
+  100% { background: transparent; }
+}
+
+@keyframes wl-flash-red {
+  0% { background: rgba(255, 69, 96, 0.2); }
+  100% { background: transparent; }
+}
+
+.watchlist-star {
+  width: 24px;
+  flex-shrink: 0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.watchlist-star.favorited {
+  color: var(--warning-yellow);
+}
+
+.watchlist-star:hover {
+  color: var(--warning-yellow);
+}
+
+.watchlist-pair-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.watchlist-price {
+  width: 80px;
+  text-align: right;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: var(--text-primary);
+}
+
+.watchlist-change {
+  width: 65px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.watchlist-change.positive {
+  color: var(--bullish);
+}
+
+.watchlist-change.negative {
+  color: var(--bearish);
+}
+
+/* ---- Add Pair Button --------------------------------------- */
+.watchlist-add-area {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.watchlist-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 5px 0;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  background: rgba(108, 99, 255, 0.08);
+  border: 1px dashed rgba(108, 99, 255, 0.3);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.watchlist-add-btn:hover {
+  background: rgba(108, 99, 255, 0.15);
+}
+
+.watchlist-add-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 10px;
+  right: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+}
+
+.watchlist-add-search {
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.watchlist-add-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.watchlist-add-option:hover {
+  background: rgba(108, 99, 255, 0.1);
+}
+
+.watchlist-add-option.already-added {
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+/* ---- Empty state ------------------------------------------- */
+.watchlist-empty {
+  padding: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}

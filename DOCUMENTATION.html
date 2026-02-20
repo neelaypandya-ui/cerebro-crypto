@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerebro Crypto - Documentation</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0f;
+  --card-surface: #12121a;
+  --border: #1e1e2e;
+  --accent: #6c63ff;
+  --accent-dim: rgba(108, 99, 255, 0.15);
+  --bullish: #00d4aa;
+  --bearish: #ff4560;
+  --text-primary: #e2e2e2;
+  --text-secondary: #8888aa;
+  --warning-yellow: #f0b429;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --sidebar-width: 260px;
+  --code-bg: #0d0d14;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::selection { background: var(--accent); color: #fff; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh;
+  background: var(--card-surface); border-right: 1px solid var(--border);
+  overflow-y: auto; padding: 20px 0; z-index: 100;
+  transition: transform 0.2s;
+}
+.sidebar-header { padding: 0 16px 16px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.sidebar-header h2 { font-size: 16px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+.sidebar-header small { color: var(--text-secondary); font-size: 11px; }
+#search-input {
+  width: calc(100% - 32px); margin: 12px 16px; padding: 8px 12px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text-primary); font-size: 13px; outline: none;
+}
+#search-input:focus { border-color: var(--accent); }
+.nav-link {
+  display: block; padding: 6px 16px; color: var(--text-secondary); text-decoration: none;
+  font-size: 13px; font-weight: 500; transition: all 0.12s; border-left: 3px solid transparent;
+}
+.nav-link:hover { color: var(--text-primary); background: var(--accent-dim); border-left-color: var(--accent); }
+.nav-link.sub { padding-left: 28px; font-size: 12px; }
+
+/* Main content */
+.main { margin-left: var(--sidebar-width); padding: 32px 48px 80px; max-width: 960px; }
+
+/* Quick Reference Card */
+.quick-ref {
+  background: var(--card-surface); border: 1px solid var(--accent); border-radius: var(--radius);
+  padding: 20px 24px; margin-bottom: 32px;
+}
+.quick-ref h3 { color: var(--accent); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.quick-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+.quick-ref code { background: var(--code-bg); padding: 2px 6px; border-radius: var(--radius-sm); font-size: 13px; color: var(--bullish); font-family: 'Courier New', monospace; }
+.quick-ref .label { color: var(--text-secondary); font-size: 12px; }
+
+/* Section headers */
+h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+h2 {
+  font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border); color: var(--text-primary); cursor: pointer;
+}
+h2::before { content: '# '; color: var(--accent); }
+h3 { font-size: 17px; font-weight: 600; margin: 24px 0 12px; color: var(--text-primary); }
+h4 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--text-secondary); }
+.subtitle { color: var(--text-secondary); font-size: 16px; margin-bottom: 24px; font-style: italic; }
+hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+/* Text */
+p { margin-bottom: 12px; }
+strong { color: var(--text-primary); font-weight: 600; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul, ol { margin: 8px 0 16px 24px; }
+li { margin-bottom: 4px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+th { background: var(--card-surface); color: var(--accent); text-align: left; padding: 10px 12px; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: rgba(108, 99, 255, 0.04); }
+
+/* Code */
+code { background: var(--code-bg); color: var(--bullish); padding: 2px 6px; border-radius: var(--radius-sm); font-family: 'Courier New', monospace; font-size: 13px; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; overflow-x: auto; margin: 12px 0 20px; line-height: 1.5; }
+pre code { background: none; padding: 0; color: var(--text-primary); }
+.kw { color: var(--accent); } .str { color: var(--bullish); } .cm { color: var(--text-secondary); }
+
+/* Collapsible sections */
+.section-content { overflow: hidden; transition: max-height 0.3s; }
+.section-content.collapsed { max-height: 0 !important; }
+h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-weight: 400; }
+
+/* Footer */
+.footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; text-align: center; }
+
+/* Hamburger */
+.hamburger { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: var(--card-surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text-primary); cursor: pointer; font-size: 18px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .hamburger { display: block; }
+  .main { margin-left: 0; padding: 24px 20px 60px; }
+  .quick-ref-grid { grid-template-columns: 1fr; }
+}
+
+/* Print */
+@media print {
+  .sidebar, .hamburger, #search-input { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  body { background: #fff; color: #000; font-size: 12px; }
+  h2 { border-bottom-color: #ccc; color: #000; }
+  h2::before { color: #333; }
+  code { background: #f0f0f0; color: #333; }
+  pre { background: #f5f5f5; border-color: #ddd; }
+  table { font-size: 11px; }
+  th { background: #eee; color: #000; }
+  td { border-color: #ddd; }
+  .quick-ref { border-color: #333; }
+}
+</style>
+</head>
+<body>
+<button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>CEREBRO CRYPTO</h2>
+    <small>Documentation v1.0.2</small>
+  </div>
+  <input type="text" id="search-input" placeholder="Search docs..." oninput="filterNav(this.value)">
+  <a class="nav-link" href="#overview">Overview</a>
+  <a class="nav-link" href="#tech-stack">Tech Stack</a>
+  <a class="nav-link" href="#architecture">Architecture</a>
+  <a class="nav-link" href="#file-map">File Map</a>
+  <a class="nav-link" href="#getting-started">Getting Started</a>
+  <a class="nav-link sub" href="#prerequisites">Prerequisites</a>
+  <a class="nav-link sub" href="#installation">Installation</a>
+  <a class="nav-link sub" href="#environment-variables">Environment Variables</a>
+  <a class="nav-link sub" href="#running">Running the Project</a>
+  <a class="nav-link" href="#api-reference">API Reference</a>
+  <a class="nav-link sub" href="#proxy-endpoints">Proxy Endpoints</a>
+  <a class="nav-link sub" href="#coinbase-rest">Coinbase REST Proxy</a>
+  <a class="nav-link sub" href="#websocket-channels">WebSocket Channels</a>
+  <a class="nav-link" href="#authentication">Authentication &amp; Security</a>
+  <a class="nav-link" href="#modules">Key Modules &amp; Components</a>
+  <a class="nav-link sub" href="#store">Store (Zustand)</a>
+  <a class="nav-link sub" href="#services">Services</a>
+  <a class="nav-link sub" href="#hooks">Custom Hooks</a>
+  <a class="nav-link sub" href="#ui-components">UI Components</a>
+  <a class="nav-link sub" href="#workers">Web Workers</a>
+  <a class="nav-link sub" href="#utilities">Utilities</a>
+  <a class="nav-link" href="#paper-trading">Paper Trading</a>
+  <a class="nav-link" href="#indicators">Indicator Engine</a>
+  <a class="nav-link" href="#chart-mechanisms">Chart Mechanisms</a>
+  <a class="nav-link sub" href="#chart-arch">Architecture Overview</a>
+  <a class="nav-link sub" href="#canvas-lifecycle">Canvas Lifecycle</a>
+  <a class="nav-link sub" href="#safety">Safety Mechanisms</a>
+  <a class="nav-link sub" href="#draw-pipeline">Drawing Pipeline</a>
+  <a class="nav-link sub" href="#lower-panel">Lower Indicator Panel</a>
+  <a class="nav-link sub" href="#view-interaction">View &amp; Interaction</a>
+  <a class="nav-link sub" href="#data-flow-chart">Data Flow</a>
+  <a class="nav-link sub" href="#resize">Resize Handling</a>
+  <a class="nav-link sub" href="#overlay-system">Overlay System</a>
+  <a class="nav-link sub" href="#recent-trades-issue">Known Issue: recentTrades</a>
+  <a class="nav-link" href="#strategies">Strategy &amp; Regime Detection</a>
+  <a class="nav-link" href="#risk">Risk Management</a>
+  <a class="nav-link" href="#backtesting">Backtesting</a>
+  <a class="nav-link" href="#scalp-dashboard">Scalp Dashboard</a>
+  <a class="nav-link" href="#database">Database &amp; Persistence</a>
+  <a class="nav-link" href="#configuration">Configuration</a>
+  <a class="nav-link" href="#theming">Color Palette &amp; Theming</a>
+  <a class="nav-link" href="#dependencies">Dependency Graph</a>
+  <a class="nav-link" href="#security">Security Notes</a>
+  <a class="nav-link" href="#todos">TODOs &amp; Known Issues</a>
+  <a class="nav-link" href="#troubleshooting">Troubleshooting</a>
+  <a class="nav-link" href="#changelog">Changelog</a>
+</nav>
+
+<div class="main">
+<h1>Cerebro Crypto</h1>
+<p class="subtitle">A professional-grade cryptocurrency trading terminal built with React + Express, powered by the Coinbase Advanced Trade API.</p>
+
+<div class="quick-ref">
+  <h3>Quick Reference</h3>
+  <div class="quick-ref-grid">
+    <div><span class="label">Install:</span> <code>npm install</code></div>
+    <div><span class="label">Run:</span> <code>npm run dev</code></div>
+    <div><span class="label">Frontend:</span> <code>http://localhost:3001</code></div>
+    <div><span class="label">Proxy:</span> <code>http://localhost:3002</code></div>
+    <div><span class="label">Build:</span> <code>npm run build</code></div>
+    <div><span class="label">Config:</span> <code>.env</code></div>
+    <div><span class="label">Entry:</span> <code>src/main.jsx</code></div>
+    <div><span class="label">Server:</span> <code>server/proxy.js</code></div>
+    <div><span class="label">Store:</span> <code>src/store/index.js</code></div>
+    <div><span class="label">Strategies:</span> <code>src/strategies/</code></div>
+  </div>
+</div>
+
+<hr>
+
+<!-- OVERVIEW -->
+<h2 id="overview">Overview <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p>Cerebro Crypto is a full-featured cryptocurrency trading terminal designed for active traders. It connects to the <strong>Coinbase Advanced Trade API</strong> for real-time market data and order execution, with a built-in paper trading simulator for risk-free practice.</p>
+<p><strong>Key capabilities:</strong></p>
+<ul>
+<li>Real-time candlestick charts with custom HTML5 Canvas rendering</li>
+<li>Live WebSocket price feeds for 18 trading pairs</li>
+<li>Paper trading with $25,000 simulated balance</li>
+<li>Live trading with Coinbase account (Ed25519 JWT authentication)</li>
+<li>Technical indicators computed off-thread via Web Workers (EMA, RSI, MACD, BB, ATR, ADX, VWAP)</li>
+<li>Automated stop-loss / take-profit execution with trailing stops</li>
+<li>Market regime detection (Bullish / Choppy / Bearish)</li>
+<li>8 built-in trading strategies including 4 scalping strategies</li>
+<li>Scalp Dashboard with spread monitoring, trade flow analysis, fee impact calculations</li>
+<li>Backtesting engine with equity curve visualization</li>
+<li>AI Assistant integration (Claude / OpenAI)</li>
+<li>Alert system for price and indicator conditions</li>
+<li>In-app User Guide with search</li>
+<li>Configurable indicator picker with preset management</li>
+<li>Trade log with CSV/JSON export</li>
+<li>IndexedDB caching for offline candle data</li>
+</ul>
+</div>
+
+<!-- TECH STACK -->
+<h2 id="tech-stack">Tech Stack <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<table>
+<tr><th>Category</th><th>Technology</th><th>Version</th></tr>
+<tr><td><strong>Frontend</strong></td><td>React</td><td>^18.3.1</td></tr>
+<tr><td><strong>Build Tool</strong></td><td>Vite</td><td>^5.4.10</td></tr>
+<tr><td><strong>State</strong></td><td>Zustand</td><td>^4.5.5</td></tr>
+<tr><td><strong>HTTP</strong></td><td>Axios</td><td>^1.7.7</td></tr>
+<tr><td><strong>Lists</strong></td><td>react-window</td><td>^1.8.10</td></tr>
+<tr><td><strong>Storage</strong></td><td>idb (IndexedDB)</td><td>^8.0.0</td></tr>
+<tr><td><strong>Backend</strong></td><td>Express</td><td>^4.21.0</td></tr>
+<tr><td><strong>WebSocket</strong></td><td>ws</td><td>^8.18.0</td></tr>
+<tr><td><strong>Auth</strong></td><td>jsonwebtoken + node:crypto</td><td>^9.0.2</td></tr>
+<tr><td><strong>CORS</strong></td><td>cors</td><td>^2.8.5</td></tr>
+<tr><td><strong>Env</strong></td><td>dotenv</td><td>^16.4.5</td></tr>
+<tr><td><strong>Runner</strong></td><td>concurrently</td><td>^9.0.1</td></tr>
+<tr><td><strong>Styling</strong></td><td>Vanilla CSS + Variables</td><td>&mdash;</td></tr>
+<tr><td><strong>Font</strong></td><td>Inter (Google Fonts)</td><td>400&ndash;800</td></tr>
+</table>
+</div>
+
+<!-- ARCHITECTURE -->
+<h2 id="architecture">Architecture <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<pre><code>┌───────────────────────────────────────────────────────────┐
+│                   Browser (Port 3001)                     │
+│  ┌─────────────────────────────────────────────────────┐  │
+│  │              React Application                      │  │
+│  │  TopBar │ Chart │ OrderEntry │ Positions │ TradeLog  │  │
+│  │  Bottom Tabs: Backtest │ Alerts │ Scalp │ Guide     │  │
+│  │  Zustand Store ← Web Workers (indicators, backtest) │  │
+│  │  IndexedDB + localStorage (cache, trades, settings) │  │
+│  └─────────────────────────┬───────────────────────────┘  │
+│                             │ /api proxy                   │
+└─────────────────────────────┼──────────────────────────────┘
+                              ▼
+┌───────────────────────────────────────────────────────────┐
+│            Express Proxy Server (Port 3002)                │
+│  Ed25519/ES256 JWT │ Paper simulation │ HMAC fallback      │
+└─────────────────────────────┬──────────────────────────────┘
+                              ▼
+┌───────────────────────────────────────────────────────────┐
+│  Coinbase Advanced Trade API (REST + WebSocket)            │
+└───────────────────────────────────────────────────────────┘</code></pre>
+<p><strong>Data flow:</strong></p>
+<ol>
+<li><strong>WebSocket</strong> → useCoinbaseWebSocket → Zustand store → Components</li>
+<li><strong>REST</strong> → useCoinbaseREST → Store (with IndexedDB cache)</li>
+<li><strong>Indicators</strong> → Candles → Worker → Store → Chart</li>
+<li><strong>Orders</strong> → useOrders → Proxy → Coinbase (live) or Paper sim</li>
+<li><strong>Regime</strong> → 5s polling → Worker → Store + alert log</li>
+</ol>
+</div>
+
+<!-- FILE MAP -->
+<h2 id="file-map">File Map <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<pre><code>cerebro-crypto/
+├── .env / .env.example        Environment config
+├── index.html / package.json  Entry point and dependencies
+├── vite.config.js             Build config (port 3001, /api proxy)
+├── server/proxy.js            Express proxy with JWT auth
+└── src/
+    ├── main.jsx / App.jsx     React entry and root layout
+    ├── index.css / App.css    CSS variables and grid layout
+    ├── config/                constants, indicatorDefaults, tickerProfiles
+    ├── db/indexedDB.js        IndexedDB wrapper (trades, candles, alerts)
+    ├── store/index.js         Zustand global store
+    ├── services/              coinbaseREST, coinbaseWebSocket, aiService
+    ├── hooks/                 8 custom hooks (market data, orders, positions...)
+    ├── workers/               indicators.worker, backtest.worker
+    ├── utils/                 11 modules (indicators, risk, formatters, scalp...)
+    ├── strategies/            8 strategies + registry (momentum, scalp, breakout...)
+    └── components/            15 directories
+        ├── TopBar/            Logo, regime, portfolio stats, mode badge
+        ├── Chart/             Custom HTML5 Canvas with indicators
+        ├── Watchlist/         18 pairs with search/sort/favorites
+        ├── OrderBook/         Bid/ask depth with spread
+        ├── OrderEntry/        Buy/Sell form with risk validation
+        ├── Positions/         Open positions with live P&amp;L
+        ├── StrategyControls/  Strategy toggles + bot + scorecard
+        ├── TradeLog/          Virtualized history with export
+        ├── AIAssistant/       Chat with market context
+        ├── Settings/          API keys, risk, WS status
+        ├── Backtest/          Strategy backtest with equity curve
+        ├── AlertManager/      Price/indicator alerts
+        ├── ScalpDashboard/    Spread, flow, analytics, fees
+        ├── IndicatorPicker/   Toggle, configure, presets
+        └── Guide/             In-app docs with search</code></pre>
+</div>
+
+<!-- GETTING STARTED -->
+<h2 id="getting-started">Getting Started <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<h3 id="prerequisites">Prerequisites</h3>
+<ul><li><strong>Node.js</strong> &gt;= 18.0.0</li><li><strong>npm</strong> &gt;= 9.0.0</li><li><strong>Coinbase Advanced Trade API key</strong> (CDP format recommended)</li></ul>
+
+<h3 id="installation">Installation</h3>
+<pre><code>git clone &lt;repo-url&gt;
+cd cerebro-crypto
+npm install</code></pre>
+
+<h3 id="environment-variables">Environment Variables</h3>
+<pre><code>cp .env.example .env</code></pre>
+<table>
+<tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+<tr><td><code>COINBASE_API_KEY</code></td><td>Yes</td><td>CDP API key (UUID format)</td></tr>
+<tr><td><code>COINBASE_API_SECRET</code></td><td>Yes</td><td>Base64 Ed25519 key (64 bytes) or PEM EC key</td></tr>
+<tr><td><code>PORT</code></td><td>No</td><td>Frontend port (default: 3001)</td></tr>
+<tr><td><code>PROXY_PORT</code></td><td>No</td><td>Proxy port (default: 3002)</td></tr>
+</table>
+
+<h3 id="running">Running the Project</h3>
+<pre><code>npm run dev        # Start proxy (3002) + Vite (3001)
+npm run server     # Proxy only
+npm run build      # Production build
+npm run preview    # Serve production build</code></pre>
+<p>Open <code>http://localhost:3001</code> in your browser.</p>
+</div>
+
+<!-- API REFERENCE -->
+<h2 id="api-reference">API Reference <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<h3 id="proxy-endpoints">Proxy Server Endpoints</h3>
+<table>
+<tr><th>Method</th><th>Path</th><th>Description</th></tr>
+<tr><td><code>GET</code></td><td><code>/api/health</code></td><td>Health check &mdash; returns { status, mode, keyType }</td></tr>
+<tr><td><code>GET</code></td><td><code>/api/mode</code></td><td>Get trading mode (paper/live)</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/mode</code></td><td>Set trading mode</td></tr>
+<tr><td><code>POST</code></td><td><code>/api/ws-auth</code></td><td>Generate WebSocket auth credentials</td></tr>
+<tr><td><code>ALL</code></td><td><code>/api/coinbase/*</code></td><td>Proxy to Coinbase with JWT signing</td></tr>
+</table>
+
+<h3 id="coinbase-rest">Coinbase REST Proxy</h3>
+<p>All routes proxied through <code>/api/coinbase/</code> to <code>https://api.coinbase.com/api/v3/brokerage/</code>:</p>
+<table>
+<tr><th>Frontend Path</th><th>Purpose</th></tr>
+<tr><td><code>/api/coinbase/products</code></td><td>List trading pairs</td></tr>
+<tr><td><code>/api/coinbase/products/{id}/candles</code></td><td>OHLCV candle data</td></tr>
+<tr><td><code>/api/coinbase/products/{id}/ticker</code></td><td>Current ticker</td></tr>
+<tr><td><code>/api/coinbase/accounts</code></td><td>Portfolio balances</td></tr>
+<tr><td><code>/api/coinbase/orders</code></td><td>Place order (paper: simulated)</td></tr>
+<tr><td><code>/api/coinbase/orders/historical/batch</code></td><td>Order history</td></tr>
+<tr><td><code>/api/coinbase/orders/batch_cancel</code></td><td>Cancel orders</td></tr>
+<tr><td><code>/api/coinbase/portfolios</code></td><td>Named portfolios</td></tr>
+<tr><td><code>/api/coinbase/transaction_summary</code></td><td>Fee tier info</td></tr>
+</table>
+
+<h3 id="websocket-channels">WebSocket Channels</h3>
+<table>
+<tr><th>Channel</th><th>Data</th><th>Rate</th></tr>
+<tr><td><code>ticker</code></td><td>Price, 24h change, volume</td><td>250ms throttled</td></tr>
+<tr><td><code>candles</code></td><td>Live candlestick updates</td><td>Per close</td></tr>
+<tr><td><code>level2</code></td><td>Order book depth</td><td>Real-time</td></tr>
+<tr><td><code>market_trades</code></td><td>Executed trades</td><td>Real-time</td></tr>
+<tr><td><code>user</code></td><td>Order status updates</td><td>On events</td></tr>
+<tr><td><code>heartbeats</code></td><td>Keep-alive</td><td>30 seconds</td></tr>
+</table>
+</div>
+
+<!-- AUTH -->
+<h2 id="authentication">Authentication &amp; Security <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<h3>JWT Signing (Ed25519 / ES256)</h3>
+<p>The proxy auto-detects key format:</p>
+<p><strong>Ed25519 (EdDSA):</strong></p>
+<pre><code>Header:  { alg: "EdDSA", typ: "JWT", kid: "&lt;API_KEY&gt;", nonce: "&lt;random&gt;" }
+Payload: { iss: "cdp", sub: "&lt;API_KEY&gt;", nbf, exp: +120s, uri: "METHOD api.coinbase.com/path" }</code></pre>
+<p><strong>WebSocket JWT:</strong> Same structure but <strong>without <code>uri</code> field</strong>.</p>
+<p><strong>HMAC Fallback:</strong> For legacy 32-byte keys, uses <code>CB-ACCESS-KEY</code>, <code>CB-ACCESS-SIGN</code> (HMAC-SHA256), <code>CB-ACCESS-TIMESTAMP</code> headers.</p>
+</div>
+
+<!-- MODULES -->
+<h2 id="modules">Key Modules &amp; Components <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+
+<h3 id="store">Store (Zustand)</h3>
+<p><strong>File:</strong> <code>src/store/index.js</code> &mdash; Single global store with localStorage persistence.</p>
+<p><strong>Key state:</strong> wsStatus, tradingMode, activePair, watchlist, favorites, tickers, orderBook, candles, indicators, currentRegime, regimeHistory, positions, pendingOrders, portfolio, paperPortfolio, activeStrategies, botRunning, signals, riskSettings, alerts, chartIndicators, indicatorConfig</p>
+<p><strong>Key actions:</strong> updateTicker, addCandle, setIndicators, setRegime, addPosition, removePosition, toggleStrategy, emergencyStopAll, addToast</p>
+
+<h3 id="services">Services</h3>
+<p><strong>coinbaseREST.js</strong> &mdash; Axios client, 15s timeout, auto-unwraps <code>.data</code>. Exposes: getProducts, getProductCandles, getAccounts, createOrder, cancelOrders, getWsAuth.</p>
+<p><strong>coinbaseWebSocket.js</strong> &mdash; Singleton WebSocket: exponential backoff (1&ndash;30s), heartbeat, channel routing, alias <code>l2_data</code> &rarr; <code>level2</code>.</p>
+<p><strong>aiService.js</strong> &mdash; Claude/OpenAI chat client, 60s timeout, proxied through <code>/api/ai/chat</code>.</p>
+
+<h3 id="hooks">Custom Hooks</h3>
+<table>
+<tr><th>Hook</th><th>Purpose</th></tr>
+<tr><td><code>useMarketData</code></td><td>Orchestrates WS + REST + indicator worker</td></tr>
+<tr><td><code>useCoinbaseWebSocket</code></td><td>WS lifecycle, channel subscriptions, store routing</td></tr>
+<tr><td><code>useCoinbaseREST</code></td><td>REST calls with IndexedDB caching</td></tr>
+<tr><td><code>useOrders</code></td><td>Order submission with risk validation</td></tr>
+<tr><td><code>usePositions</code></td><td>Real-time P&amp;L, SL/TP execution (500ms)</td></tr>
+<tr><td><code>usePaperTrading</code></td><td>Paper balance, positions, equity</td></tr>
+<tr><td><code>useBacktest</code></td><td>Backtest worker management</td></tr>
+<tr><td><code>useRegimeDetection</code></td><td>5s regime polling with reasons</td></tr>
+</table>
+
+<h3 id="ui-components">UI Components</h3>
+<p>15 component directories: <strong>TopBar</strong> (logo, regime, stats), <strong>Watchlist</strong> (18 pairs), <strong>Chart</strong> (Canvas), <strong>OrderBook</strong>, <strong>OrderEntry</strong>, <strong>Positions</strong>, <strong>StrategyControls</strong> (+StrategyCard, BotMasterControls, ScalpSessionScorecard), <strong>TradeLog</strong>, <strong>AIAssistant</strong>, <strong>Settings</strong>, <strong>Backtest</strong>, <strong>AlertManager</strong>, <strong>ScalpDashboard</strong> (+SpreadMonitor, TradeFlowBar, ScalpAnalytics, FeeImpactCalculator), <strong>IndicatorPicker</strong> (+IndicatorList, IndicatorConfig, PresetManager), <strong>Guide</strong> (+GuideSidebar, GuideContent, GuideSearch).</p>
+
+<h3 id="workers">Web Workers</h3>
+<p><strong>indicators.worker.js</strong> &mdash; EMA (9/21/50), SMA (200), RSI (14), MACD, BB, ATR, ADX, VWAP + regime detection.</p>
+<p><strong>backtest.worker.js</strong> &mdash; Bar-by-bar strategy replay with equity curve and progress updates.</p>
+
+<h3 id="utilities">Utilities</h3>
+<table>
+<tr><th>File</th><th>Purpose</th></tr>
+<tr><td><code>indicators.js</code></td><td>calcSMA, calcEMA, calcRSI, calcMACD, calcBB, calcATR, calcADX, calcVWAP</td></tr>
+<tr><td><code>riskManager.js</code></td><td>validateOrder, calculatePositionSize, calculateStopLoss, calculateTakeProfit</td></tr>
+<tr><td><code>paperSimulator.js</code></td><td>simulateFill, createPaperPosition, closePaperPosition</td></tr>
+<tr><td><code>regimeDetector.js</code></td><td>detectRegime (ADX, EMA alignment, RSI, BB width)</td></tr>
+<tr><td><code>formatters.js</code></td><td>formatPrice, formatUSD, formatPercent, abbreviateNumber, formatDuration</td></tr>
+<tr><td><code>spreadMonitor.js</code></td><td>Spread status: green &lt;0.03%, yellow &lt;0.08%, red</td></tr>
+<tr><td><code>feeCalculator.js</code></td><td>Coinbase fee tier lookups</td></tr>
+<tr><td><code>slippageEstimator.js</code></td><td>Slippage from order size/liquidity</td></tr>
+<tr><td><code>scalpCircuitBreaker.js</code></td><td>Kills scalping in bad conditions</td></tr>
+<tr><td><code>correlationGuard.js</code></td><td>Prevents correlated pair trades</td></tr>
+<tr><td><code>signalExpiry.js</code></td><td>Expires stale strategy signals</td></tr>
+</table>
+</div>
+
+<!-- PAPER TRADING -->
+<h2 id="paper-trading">Paper Trading <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p><strong>$25,000 starting balance.</strong> Orders filled at market &plusmn;0.05% slippage with 0.6% taker fee. Positions tracked client-side with SL/TP monitoring every 500ms.</p>
+<ul>
+<li>TP1 (1.5R): Close 50%, move SL to break-even, activate trailing stop</li>
+<li>TP2 (3R): Close remainder</li>
+<li>Trade history saved to IndexedDB; balance persisted in localStorage</li>
+<li>Visual: <span style="color:var(--warning-yellow)">yellow borders</span> = paper, <span style="color:var(--bearish)">red borders</span> = live</li>
+</ul>
+</div>
+
+<!-- INDICATORS -->
+<h2 id="indicators">Indicator Engine <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p>All computed off-thread in <code>indicators.worker.js</code>:</p>
+<table>
+<tr><th>Indicator</th><th>Parameters</th><th>Output</th></tr>
+<tr><td><strong>EMA</strong></td><td>9, 21, 50</td><td>Moving average arrays</td></tr>
+<tr><td><strong>SMA</strong></td><td>200</td><td>Moving average array</td></tr>
+<tr><td><strong>RSI</strong></td><td>14</td><td>Values 0-100</td></tr>
+<tr><td><strong>MACD</strong></td><td>12, 26, 9</td><td>macd, signal, histogram</td></tr>
+<tr><td><strong>Bollinger Bands</strong></td><td>20, 2&sigma;</td><td>upper, middle, lower</td></tr>
+<tr><td><strong>ATR</strong></td><td>14</td><td>True range averages</td></tr>
+<tr><td><strong>ADX</strong></td><td>14</td><td>Trend strength 0-100</td></tr>
+<tr><td><strong>VWAP</strong></td><td>Daily reset</td><td>Volume-weighted avg price</td></tr>
+</table>
+<p>Users configure via <strong>IndicatorPicker</strong> with save/load presets.</p>
+
+<h4>Extended Indicators (via IndicatorPicker)</h4>
+<table>
+<tr><th>Indicator</th><th>Parameters</th><th>Output</th></tr>
+<tr><td>HMA</td><td>Period: 9</td><td>Hull Moving Average</td></tr>
+<tr><td>TEMA</td><td>Period: 9</td><td>Triple Exponential MA</td></tr>
+<tr><td>Ichimoku</td><td>9, 26, 52</td><td>tenkanSen, kijunSen, senkouA/B, chikou</td></tr>
+<tr><td>Parabolic SAR</td><td>Step: 0.02, Max: 0.2</td><td>SAR values</td></tr>
+<tr><td>Supertrend</td><td>Period: 10, Mult: 3</td><td>Trend levels</td></tr>
+<tr><td>Keltner</td><td>Period: 20, Mult: 1.5</td><td>upper, middle, lower</td></tr>
+<tr><td>Pivot Points</td><td>Standard</td><td>pp, r1-r3, s1-s3</td></tr>
+<tr><td>StochRSI</td><td>14, 14, 3, 3</td><td>k, d</td></tr>
+<tr><td>Williams %R</td><td>Period: 14</td><td>Values -100 to 0</td></tr>
+<tr><td>CCI</td><td>Period: 20</td><td>Commodity Channel Index</td></tr>
+<tr><td>OBV</td><td>&mdash;</td><td>On Balance Volume</td></tr>
+<tr><td>MFI</td><td>Period: 14</td><td>Money Flow Index 0-100</td></tr>
+<tr><td>CMF</td><td>Period: 20</td><td>Chaikin Money Flow</td></tr>
+<tr><td>ROC</td><td>Period: 12</td><td>Rate of Change (%)</td></tr>
+<tr><td>TRIX</td><td>Period: 15</td><td>Triple-smoothed EMA ROC</td></tr>
+<tr><td>Volume Profile</td><td>Rows: 24</td><td>levels, poc, vaHigh/Low</td></tr>
+</table>
+</div>
+
+<!-- CHART MECHANISMS -->
+<h2 id="chart-mechanisms">Chart Mechanisms <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p><em>Deep-dive into the custom HTML5 Canvas charting engine &mdash; architecture, rendering pipeline, interaction model, safety mechanisms, and data flow.</em></p>
+
+<h3 id="chart-arch">Architecture Overview</h3>
+<p><strong>File:</strong> <code>src/components/Chart/Chart.jsx</code> (~490 lines)</p>
+<p>The chart is a <strong>custom HTML5 Canvas candlestick renderer</strong> &mdash; no third-party charting library. Two-canvas architecture: main canvas for candlesticks/overlays/crosshair and lower canvas for oscillators/volume.</p>
+
+<pre><code>&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474;  Toolbar                                                &#9474;
+&#9474;  [Pair] [1m 5m 15m 1H 4H 1D 1W] [EMA9 EMA21 ... +]    &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;
+&#9474;  Main Canvas (DOM-created, flex:1)                      &#9474;
+&#9474;  &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488; &#9474;
+&#9474;  &#9474; Candlesticks + Wicks + Overlays        &#9474; Price  &#9474; &#9474;
+&#9474;  &#9474; (EMA, SMA, BB, VWAP lines)             &#9474; Axis   &#9474; &#9474;
+&#9474;  &#9474; Volume bars (bottom 18%)               &#9474; (70px) &#9474; &#9474;
+&#9474;  &#9474; Crosshair + OHLCV tooltip              &#9474;        &#9474; &#9474;
+&#9474;  &#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9524;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508; &#9474;
+&#9474;  &#9474; Time Axis (24px)                                   &#9474; &#9474;
+&#9474;  &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496; &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;
+&#9474;  Lower Tabs: [VOLUME RSI MACD ATR ADX ...]              &#9474;
+&#9500;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;
+&#9474;  Lower Canvas (DOM-created, 120px)                      &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</code></pre>
+
+<p><strong>Key design decisions:</strong></p>
+<ul>
+<li><strong>No third-party chart library</strong> &mdash; full control over rendering and performance</li>
+<li><strong>DOM-created canvases</strong> &mdash; created via <code>document.createElement('canvas')</code> in <code>useEffect</code>, not JSX, isolating canvas errors from React&rsquo;s error boundary</li>
+<li><strong>requestAnimationFrame rendering</strong> &mdash; all drawing deferred to rAF, preventing canvas errors from propagating through React&rsquo;s synchronous render cycle</li>
+<li><strong>Two independent draw callbacks</strong> &mdash; <code>drawMainChart</code> and <code>drawLowerChart</code> as separate <code>useCallback</code> functions</li>
+</ul>
+
+<h3 id="canvas-lifecycle">Canvas Creation &amp; Lifecycle</h3>
+<p>Canvases live outside React&rsquo;s virtual DOM:</p>
+<pre><code><span class="cm">// useEffect (runs once on mount)</span>
+<span class="kw">const</span> mainCanvas = document.createElement(<span class="str">'canvas'</span>);
+mainCanvas.style.cssText = <span class="str">'width:100%;height:100%;display:block;cursor:crosshair'</span>;
+mainContainerRef.current.appendChild(mainCanvas);
+mainCanvasRef.current = mainCanvas;
+
+<span class="cm">// Cleanup on unmount</span>
+<span class="kw">return</span> () =&gt; {
+  mainCanvasRef.current = <span class="kw">null</span>;
+  mc.removeChild(mainCanvas);
+};</code></pre>
+
+<p><strong>Why DOM-created instead of JSX?</strong> When a <code>&lt;canvas&gt;</code> is rendered via JSX, any error thrown during canvas operations gets caught by React&rsquo;s error boundary, which can cascade and unmount the entire component tree. Previously, a <code>CanvasRenderingContext2D</code> <code>InvalidStateError</code> in Firefox would crash the entire right sidebar (OrderEntry, Positions, TradeLog, AIAssistant).</p>
+
+<h3 id="safety">Safety Mechanisms</h3>
+<h4>safeGetCtx() &mdash; Context Recovery</h4>
+<pre><code><span class="kw">function</span> safeGetCtx(canvas) {
+  <span class="kw">try</span> {
+    <span class="kw">if</span> (!canvas || canvas.width &lt;= 0 || canvas.height &lt;= 0) <span class="kw">return null</span>;
+    <span class="kw">const</span> ctx = canvas.getContext(<span class="str">'2d'</span>);
+    <span class="kw">if</span> (!ctx) <span class="kw">return null</span>;
+    ctx.clearRect(0, 0, 1, 1);  <span class="cm">// Test: throws if in error state</span>
+    <span class="kw">return</span> ctx;
+  } <span class="kw">catch</span> (_e) {
+    <span class="kw">try</span> {
+      <span class="cm">// Recovery: reset canvas dimensions to clear error state</span>
+      <span class="kw">const</span> w = canvas.width, h = canvas.height;
+      canvas.width = 0; canvas.height = 0;
+      canvas.width = w; canvas.height = h;
+      <span class="kw">return</span> canvas.getContext(<span class="str">'2d'</span>);
+    } <span class="kw">catch</span> (_e2) { <span class="kw">return null</span>; }
+  }
+}</code></pre>
+
+<h4>Additional Safety Layers</h4>
+<table>
+<tr><th>Mechanism</th><th>Purpose</th></tr>
+<tr><td><strong>DPR cap at 4</strong></td><td>Prevents extreme hi-DPI from creating oversized canvas buffers</td></tr>
+<tr><td><strong>8192px dimension cap</strong></td><td>Stays within GPU max texture size limits</td></tr>
+<tr><td><strong>try-catch on all draw calls</strong></td><td>Errors logged but never propagated</td></tr>
+<tr><td><strong>rAF-based rendering</strong></td><td>Drawing happens outside React&rsquo;s synchronous render</td></tr>
+<tr><td><strong>Global error handler</strong></td><td><code>window.addEventListener('error')</code> suppresses canvas errors in <code>main.jsx</code></td></tr>
+<tr><td><strong>Auto-recovering ErrorBoundary</strong></td><td>3 retries with 1s delay (main.jsx)</td></tr>
+<tr><td><strong>Auto-recovering PanelBoundary</strong></td><td>5 retries with 1s delay (App.jsx)</td></tr>
+</table>
+
+<h3 id="draw-pipeline">Main Chart Drawing Pipeline</h3>
+<p>The <code>drawMainChart</code> callback executes these steps:</p>
+<table>
+<tr><th>Step</th><th>Operation</th><th>Details</th></tr>
+<tr><td>1</td><td>Get context</td><td><code>safeGetCtx(canvas)</code></td></tr>
+<tr><td>2</td><td>Apply DPR</td><td><code>ctx.scale(dpr, dpr)</code></td></tr>
+<tr><td>3</td><td>Calculate view</td><td>Visible candle range from offset + candleWidth</td></tr>
+<tr><td>4</td><td>Find price range</td><td>min/max of visible candles with 6% padding</td></tr>
+<tr><td>5</td><td>Draw grid</td><td>Horizontal lines using <code>niceStep()</code> algorithm</td></tr>
+<tr><td>6</td><td>Draw volume bars</td><td>Bottom 18% of chart, green/red by close vs open</td></tr>
+<tr><td>7</td><td>Draw candlesticks</td><td>Wick (line) + body (rect), <span style="color:#00d4aa">bullish</span>/<span style="color:#ff4560">bearish</span></td></tr>
+<tr><td>8</td><td>Draw overlays</td><td>EMA, SMA, Bollinger Bands, VWAP lines</td></tr>
+<tr><td>9</td><td>Draw price axis</td><td>Right-side 70px panel with formatted prices</td></tr>
+<tr><td>10</td><td>Draw current price</td><td>Colored label at last candle&rsquo;s close</td></tr>
+<tr><td>11</td><td>Draw time axis</td><td>Bottom 24px with formatted timestamps</td></tr>
+<tr><td>12</td><td>Draw crosshair</td><td>Dashed accent lines + OHLCV info box</td></tr>
+</table>
+
+<h4>Coordinate Constants</h4>
+<table>
+<tr><th>Constant</th><th>Value</th><th>Purpose</th></tr>
+<tr><td><code>PRICE_AXIS_WIDTH</code></td><td>70px</td><td>Right price axis panel</td></tr>
+<tr><td><code>TIME_AXIS_HEIGHT</code></td><td>24px</td><td>Bottom time axis</td></tr>
+<tr><td><code>VOLUME_HEIGHT_RATIO</code></td><td>0.18</td><td>Volume bars = bottom 18%</td></tr>
+<tr><td><code>CANDLE_GAP</code></td><td>2px</td><td>Gap between candle bodies</td></tr>
+</table>
+
+<p><strong>Price-to-Y conversion:</strong></p>
+<pre><code><span class="kw">const</span> priceToY = (p) =&gt; priceH * (1 - (p - priceMin) / finalPriceRange);</code></pre>
+
+<h3 id="lower-panel">Lower Indicator Panel</h3>
+<p>Renders one indicator at a time, selected via tab buttons:</p>
+<table>
+<tr><th>Indicator</th><th>Rendering</th></tr>
+<tr><td><strong>Volume</strong></td><td>Vertical bars, <span style="color:#00d4aa">green</span>/<span style="color:#ff4560">red</span> at 50% opacity</td></tr>
+<tr><td><strong>RSI</strong></td><td>Line 0-100, dashed refs at 30/50/70, color: <span style="color:#6c63ff">#6c63ff</span></td></tr>
+<tr><td><strong>MACD</strong></td><td>Histogram bars + MACD line (<span style="color:#2196F3">blue</span>) + signal (<span style="color:#FF9800">orange</span>)</td></tr>
+<tr><td><strong>ATR</strong></td><td>Line chart, auto-scaled, color: <span style="color:#FF9800">orange</span></td></tr>
+<tr><td><strong>Generic</strong></td><td>Line chart, auto-scaled, color: <span style="color:#9C27B0">purple</span> (ADX, StochRSI, CCI, etc.)</td></tr>
+</table>
+<p>13 lower indicators: volume, rsi, macd, atr, adx, stochRsi, cci, mfi, obv, williamsR, roc, trix, cmf</p>
+
+<h3 id="view-interaction">View State &amp; Interaction</h3>
+<p>View state in mutable <code>useRef</code> (not React state) to avoid re-renders during interaction:</p>
+<pre><code><span class="kw">const</span> viewRef = useRef({
+  offset: 0,          <span class="cm">// candles scrolled from right edge</span>
+  candleWidth: 8,     <span class="cm">// pixel width of each candle body</span>
+  isDragging: <span class="kw">false</span>,   <span class="cm">// mouse held down for pan</span>
+  dragStartX: 0,      <span class="cm">// mouse X at drag start</span>
+  dragStartOffset: 0  <span class="cm">// offset at drag start</span>
+});</code></pre>
+
+<table>
+<tr><th>Action</th><th>Behavior</th></tr>
+<tr><td><strong>Mouse wheel</strong></td><td>Zoom: candleWidth 2&ndash;40px, preserves focal point under cursor</td></tr>
+<tr><td><strong>Mouse drag</strong></td><td>Pan: adjusts offset based on pixel distance / candle width</td></tr>
+<tr><td><strong>Mouse hover</strong></td><td>Crosshair: dashed accent lines + OHLCV info box (upper-left)</td></tr>
+<tr><td><strong>Mouse leave</strong></td><td>Clears crosshair, resets cursor</td></tr>
+</table>
+<p>Event listeners deferred 100ms via <code>setTimeout</code> to ensure DOM canvas is laid out.</p>
+
+<h3 id="data-flow-chart">Data Flow: WebSocket to Pixels</h3>
+<pre><code>Coinbase WS &#9472;&#9472;&#9658; useCoinbaseWS &#9472;&#9658; Zustand Store
+Coinbase REST &#9472;&#9658; useCoinbaseREST &#9472;&#9658;  (candles[tf])
+                                          &#9474;
+                      useMarketData &#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+                      (orchestrator)
+                           &#9474;
+                           &#9660;
+                  indicators.worker.js
+                  CALCULATE msg &#9658; EMA, RSI, MACD, BB, ATR, ADX, VWAP...
+                  RESULT msg &#9658; store.setIndicators()
+                           &#9474;
+                           &#9660;
+                    Chart Component
+                    reads: candles[tf], indicators.*, chartIndicators
+                    draws via requestAnimationFrame</code></pre>
+
+<ol>
+<li><code>useMarketData</code> fetches 300 candles via REST and starts WebSocket</li>
+<li>Candle data stored in <code>store.candles[activeTimeframe]</code></li>
+<li>Store subscription triggers worker <code>CALCULATE</code> message on candle changes</li>
+<li>Worker computes indicators off-thread, posts <code>RESULT</code> back</li>
+<li>Results merged into <code>store.indicators</code></li>
+<li>Chart reads store via <code>useStore</code> selectors</li>
+<li><code>drawMainChart</code>/<code>drawLowerChart</code> recreated via <code>useCallback</code> on dependency change</li>
+<li><code>useEffect</code> triggers <code>requestAnimationFrame</code> to redraw</li>
+</ol>
+<p>Full cycle (WS message &rarr; store &rarr; worker &rarr; store &rarr; chart): typically &lt; 100ms.</p>
+
+<h3 id="resize">Resize Handling</h3>
+<ul>
+<li><strong>Initial 50ms delay</strong> &mdash; ensures CSS Grid layout settles before measuring</li>
+<li><strong>ResizeObserver</strong> &mdash; watches both containers, triggers <code>sizeAndDraw()</code></li>
+<li><strong>Canvas backing store</strong> &mdash; CSS size = 100%, <code>canvas.width/height</code> = container &times; DPR for crisp hi-DPI</li>
+<li>Each resize cancels pending rAF and schedules a new one</li>
+</ul>
+
+<h3 id="overlay-system">Indicator Overlay System</h3>
+<p><strong>Toolbar pill buttons:</strong></p>
+<table>
+<tr><th>Pill</th><th>Key</th><th>Color</th><th>Style</th></tr>
+<tr><td>EMA 9</td><td><code>ema9</code></td><td style="color:#2196F3">#2196F3</td><td>Solid</td></tr>
+<tr><td>EMA 21</td><td><code>ema21</code></td><td style="color:#FF9800">#FF9800</td><td>Solid</td></tr>
+<tr><td>EMA 50</td><td><code>ema50</code></td><td style="color:#9C27B0">#9C27B0</td><td>Solid</td></tr>
+<tr><td>SMA 200</td><td><code>sma200</code></td><td style="color:#FFFFFF">#FFFFFF</td><td>Dashed</td></tr>
+<tr><td>BB</td><td><code>bbands</code></td><td style="color:#8888aa">rgba(136,136,170)</td><td>Solid/Dashed</td></tr>
+<tr><td>VWAP</td><td><code>vwap</code></td><td style="color:#f0b429">#f0b429</td><td>Dashed</td></tr>
+</table>
+<p>Toggle state in <code>store.chartIndicators</code>. <strong>IndicatorPicker</strong> provides advanced selection (27 indicators), parameter configuration, and preset save/load.</p>
+
+<h3 id="recent-trades-issue">Known Issue: recentTrades Ticker</h3>
+<p>The chart previously included a scrolling trade ticker displaying the last 20 WebSocket trades. This was <strong>removed</strong> because rendering trade items with <code>formatPrice()</code> and <code>formatTimestamp()</code> caused a crash that propagated through React&rsquo;s error boundary and unmounted the entire right sidebar.</p>
+<p><strong>Root cause:</strong> The <code>recentTrades</code> array updates on every WebSocket <code>market_trades</code> message (multiple times per second). The high-frequency re-renders combined with formatter calls created a race condition with canvas operations, triggering an <code>InvalidStateError</code>. The formatters handle null/NaN safely in isolation &mdash; the exact mechanism remains unclear.</p>
+<p><strong>Resolution:</strong> Ticker removed from Chart.jsx. CSS styles remain in Chart.css but are unused. Trade data is still in the store (<code>store.recentTrades</code>) and could be rendered in a separate non-canvas component.</p>
+</div>
+
+<!-- STRATEGIES -->
+<h2 id="strategies">Strategy &amp; Regime Detection <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<h3>Market Regimes (5s polling)</h3>
+<table>
+<tr><th>Regime</th><th>Criteria</th><th>Color</th></tr>
+<tr><td><strong style="color:#00d4aa">Bullish</strong></td><td>Price &gt; SMA200, EMA stack (9&gt;21&gt;50), ADX &gt; 25, RSI 45-75</td><td style="color:#00d4aa">#00d4aa</td></tr>
+<tr><td><strong style="color:#f0b429">Choppy</strong></td><td>ADX &lt; 20, or price near SMA200 with narrow BB</td><td style="color:#f0b429">#f0b429</td></tr>
+<tr><td><strong style="color:#ff4560">Bearish</strong></td><td>Price &lt; SMA200, EMA9 &lt; EMA21, ADX &gt; 25</td><td style="color:#ff4560">#ff4560</td></tr>
+</table>
+<p><strong>Bearish regime disables all trading</strong> (capital preservation).</p>
+
+<h3>8 Built-in Strategies</h3>
+<table>
+<tr><th>Strategy</th><th>Category</th><th>Regimes</th><th>Description</th></tr>
+<tr><td><strong>Crypto Momentum</strong></td><td>Trend</td><td>Bullish</td><td>EMA9 crosses EMA21, RSI &gt; 50, volume surge</td></tr>
+<tr><td><strong>Breakout</strong></td><td>Trend</td><td>Bullish</td><td>Close above 20-bar high with volume</td></tr>
+<tr><td><strong>VWAP Reclaim</strong></td><td>Trend</td><td>Bullish</td><td>Price bounces off VWAP</td></tr>
+<tr><td><strong>Mean Reversion</strong></td><td>Mean Rev</td><td>Choppy</td><td>RSI &lt;30 or &gt;70 revert to mean</td></tr>
+<tr><td><strong>Range Scalp</strong></td><td>Scalp</td><td>Choppy</td><td>Buy lows, sell highs in S/R</td></tr>
+<tr><td><strong>Micro VWAP Scalp</strong></td><td>Scalp</td><td>Choppy</td><td>Scalp around VWAP on 1-5m</td></tr>
+<tr><td><strong>Momentum Spike</strong></td><td>Scalp</td><td>Choppy</td><td>Enter momentum burst, exit reversal</td></tr>
+<tr><td><strong>Order Book Imbalance</strong></td><td>Scalp</td><td>Choppy</td><td>Bid/ask imbalance signals</td></tr>
+</table>
+</div>
+
+<!-- RISK -->
+<h2 id="risk">Risk Management <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<table>
+<tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+<tr><td>positionSizePct</td><td>5%</td><td>Portfolio % per position</td></tr>
+<tr><td>stopLossPct</td><td>2%</td><td>SL distance from entry</td></tr>
+<tr><td>tp1R / tp2R</td><td>1.5 / 3.0</td><td>Take-profit R multiples</td></tr>
+<tr><td>maxPositions</td><td>3</td><td>Max concurrent positions</td></tr>
+<tr><td>maxDailyLossUSD</td><td>$500</td><td>Daily loss lockout</td></tr>
+<tr><td>maxTradesPerDay</td><td>10</td><td>Daily trade limit</td></tr>
+<tr><td>pairCooldownMinutes</td><td>10</td><td>Same-pair cooldown</td></tr>
+</table>
+<p><strong>SL/TP flow:</strong> SL triggers &rarr; market close. TP1 (1.5R): close 50%, SL to breakeven, trailing. TP2 (3R): close rest.</p>
+</div>
+
+<!-- BACKTESTING -->
+<h2 id="backtesting">Backtesting <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p>Worker-based bar-by-bar replay. Results: total return, win rate, profit factor, max drawdown, equity curve (canvas), trade table, CSV export.</p>
+</div>
+
+<!-- SCALP DASHBOARD -->
+<h2 id="scalp-dashboard">Scalp Dashboard <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<table>
+<tr><th>Component</th><th>Purpose</th></tr>
+<tr><td><strong>SpreadMonitor</strong></td><td>Bid-ask spread: <span style="color:#00d4aa">green</span> &lt;0.03%, <span style="color:#f0b429">yellow</span> &lt;0.08%, <span style="color:#ff4560">red</span></td></tr>
+<tr><td><strong>TradeFlowBar</strong></td><td>60s rolling buy/sell volume ratio</td></tr>
+<tr><td><strong>ScalpAnalytics</strong></td><td>Win rate, velocity, streak, P&amp;L</td></tr>
+<tr><td><strong>FeeImpactCalculator</strong></td><td>Minimum move for profitability</td></tr>
+</table>
+<p>Supported by circuit breaker, correlation guard, and slippage estimator utilities.</p>
+</div>
+
+<!-- DATABASE -->
+<h2 id="database">Database &amp; Persistence <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<h3>IndexedDB</h3>
+<table>
+<tr><th>Store</th><th>Key</th><th>Purpose</th></tr>
+<tr><td>trades</td><td>id</td><td>Live and backtest trades</td></tr>
+<tr><td>candles</td><td>auto</td><td>OHLCV cache per pair/timeframe</td></tr>
+<tr><td>paperTrades</td><td>id</td><td>Paper trading records</td></tr>
+<tr><td>alerts</td><td>id</td><td>Alert conditions</td></tr>
+</table>
+<h3>localStorage</h3>
+<p>tradingMode, activePair, watchlist, favorites, paperPortfolio, activeStrategies, riskSettings, indicatorConfig, indicatorPresets</p>
+</div>
+
+<!-- CONFIGURATION -->
+<h2 id="configuration">Configuration <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p><strong>constants.js:</strong> 18 pairs, 7 timeframes, WS URL, $25K balance, 0.05% slippage, 0.6% fee, risk defaults, colors, fee tiers.</p>
+<p><strong>indicatorDefaults.js:</strong> Default indicator periods and display colors.</p>
+<p><strong>tickerProfiles.js:</strong> Per-pair decimal places and minimum order sizes.</p>
+</div>
+
+<!-- THEMING -->
+<h2 id="theming">Color Palette &amp; Theming <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<table>
+<tr><th>Variable</th><th>Hex</th><th>Usage</th></tr>
+<tr><td>--bg</td><td style="color:#0a0a0f;background:#0a0a0f;border:1px solid var(--border)">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#0a0a0f &mdash; Main background</td></tr>
+<tr><td>--card-surface</td><td style="background:#12121a">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#12121a &mdash; Cards/panels</td></tr>
+<tr><td>--border</td><td style="background:#1e1e2e">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#1e1e2e &mdash; Borders</td></tr>
+<tr><td>--accent</td><td style="background:#6c63ff">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#6c63ff &mdash; Buttons, links</td></tr>
+<tr><td>--bullish</td><td style="background:#00d4aa">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#00d4aa &mdash; Gains, buy</td></tr>
+<tr><td>--bearish</td><td style="background:#ff4560">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#ff4560 &mdash; Losses, sell</td></tr>
+<tr><td>--text-primary</td><td style="background:#e2e2e2">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#e2e2e2 &mdash; Main text</td></tr>
+<tr><td>--text-secondary</td><td style="background:#8888aa">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#8888aa &mdash; Muted text</td></tr>
+<tr><td>--warning-yellow</td><td style="background:#f0b429">&nbsp;&nbsp;&nbsp;&nbsp;</td><td>#f0b429 &mdash; Paper/choppy</td></tr>
+</table>
+<p><strong>Layout:</strong> 3-column CSS Grid (280px | 1fr | 320px), responsive at 1200px. <strong>Font:</strong> Inter 400&ndash;800, monospace for numerics.</p>
+</div>
+
+<!-- DEPENDENCIES -->
+<h2 id="dependencies">Dependency Graph <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<table>
+<tr><th>Package</th><th>Purpose</th></tr>
+<tr><td><strong>react / react-dom</strong></td><td>UI framework</td></tr>
+<tr><td><strong>vite / @vitejs/plugin-react</strong></td><td>Build tooling, HMR</td></tr>
+<tr><td><strong>zustand</strong></td><td>State management (~3KB)</td></tr>
+<tr><td><strong>axios</strong></td><td>HTTP client with interceptors</td></tr>
+<tr><td><strong>react-window</strong></td><td>Virtualized list rendering</td></tr>
+<tr><td><strong>idb</strong></td><td>IndexedDB wrapper</td></tr>
+<tr><td><strong>express</strong></td><td>Proxy server</td></tr>
+<tr><td><strong>cors</strong></td><td>Cross-origin middleware</td></tr>
+<tr><td><strong>ws</strong></td><td>WebSocket client</td></tr>
+<tr><td><strong>jsonwebtoken</strong></td><td>JWT library (signing via node:crypto)</td></tr>
+<tr><td><strong>dotenv</strong></td><td>Environment variables</td></tr>
+<tr><td><strong>concurrently</strong></td><td>Parallel process runner</td></tr>
+</table>
+</div>
+
+<!-- SECURITY -->
+<h2 id="security">Security Notes <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<ul>
+<li>API keys stored server-side in <code>.env</code> &mdash; <strong>never exposed to browser</strong></li>
+<li>All Coinbase requests proxied with JWT signing</li>
+<li><code>.env</code> listed in <code>.gitignore</code> &mdash; not versioned</li>
+<li>Paper orders intercepted server-side, never reach Coinbase</li>
+<li>Live mode requires typing "LIVE TRADING" confirmation</li>
+<li>WebSocket tokens: 120s expiry + random nonce (replay protection)</li>
+<li>No hardcoded credentials in source code</li>
+</ul>
+</div>
+
+<!-- TODOS -->
+<h2 id="todos">TODOs &amp; Known Issues <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p>No <code>TODO</code>, <code>FIXME</code>, <code>HACK</code>, or <code>XXX</code> comments found in source code.</p>
+<p><strong>Known limitations:</strong></p>
+<ul>
+<li>No TypeScript (vanilla JS with JSX)</li>
+<li>No test framework (no Jest, Vitest, Playwright)</li>
+<li>No ESLint or Prettier configuration</li>
+<li>No CI/CD or Docker</li>
+<li>4H timeframe mapped to 6H (Coinbase limitation)</li>
+<li>Weekly candles assembled from daily</li>
+<li>No short-selling (spot only)</li>
+</ul>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<h2 id="troubleshooting">Troubleshooting <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<p><strong>No data:</strong> Check both servers running (<code>npm run dev</code>), WS errors in console, <code>.env</code> credentials.</p>
+<p><strong>Auth 401:</strong> Verify key format (64-byte base64), check proxy logs for <code>[proxy] AUTH FAILED</code>.</p>
+<p><strong>Port conflicts:</strong> <code>taskkill /F /IM node.exe</code> (Win) or <code>pkill node</code> (Unix).</p>
+<p><strong>WS disconnects:</strong> Auto-reconnects 1&ndash;30s backoff. Check TopBar status indicator.</p>
+<p><strong>Chart blank:</strong> Ensure candles loaded (Network tab), check console for canvas errors. If <code>InvalidStateError</code>, <code>safeGetCtx()</code> should auto-recover. If right sidebar disappears, canvas error may have escaped isolation.</p>
+</div>
+
+<!-- CHANGELOG -->
+<h2 id="changelog">Changelog <span class="toggle">&#9660;</span></h2>
+<div class="section-content">
+<h3>v1.0.2 (2026-02-19)</h3>
+<ul>
+<li><strong>Chart rewrite:</strong> DOM-created canvases for error isolation from React</li>
+<li>Added <code>safeGetCtx()</code> canvas context recovery mechanism</li>
+<li>DPR cap (4x) and canvas dimension cap (8192px)</li>
+<li>Auto-recovering PanelBoundary (5 retries) and ErrorBoundary (3 retries)</li>
+<li>Global canvas error suppression handler</li>
+<li>Removed recentTrades ticker (caused high-frequency render crashes)</li>
+<li>17 new indicators in worker: HMA, TEMA, Ichimoku, Parabolic SAR, Supertrend, Keltner, Pivots, StochRSI, Williams %R, CCI, OBV, MFI, CMF, ROC, TRIX, Volume Profile</li>
+<li>Comprehensive Chart Mechanisms documentation</li>
+</ul>
+<h3>v1.0.1 (2026-02-19)</h3>
+<ul>
+<li>3 new scalping strategies: Micro VWAP Scalp, Momentum Spike Scalp, Order Book Imbalance Scalp</li>
+<li>ScalpDashboard with SpreadMonitor, TradeFlowBar, ScalpAnalytics, FeeImpactCalculator</li>
+<li>IndicatorPicker with preset management</li>
+<li>In-app User Guide with search</li>
+<li>StrategyCard, BotMasterControls, ScalpSessionScorecard sub-components</li>
+<li>6 new scalping utilities</li>
+<li>tickerProfiles and indicatorDefaults config</li>
+<li>Strategy count: 5 &rarr; 8</li>
+</ul>
+<h3>v1.0.0 (2026-02-18)</h3>
+<ul>
+<li>Initial release: Canvas chart, Ed25519 JWT, paper trading, 10 indicators, regime detection, 5 strategies, backtesting, AI assistant, alerts, IndexedDB, trade log, dark theme</li>
+</ul>
+</div>
+
+<div class="footer">
+<p>Generated by <strong>DoogieHowser</strong> documentation agent on 2026-02-19</p>
+<p>Last Updated: 2026-02-19 &mdash; Chart Mechanisms update</p>
+</div>
+</div>
+
+<script>
+// Search filtering
+function filterNav(q) {
+  q = q.toLowerCase();
+  document.querySelectorAll('.nav-link').forEach(function(a) {
+    a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+// Collapsible sections
+document.querySelectorAll('h2').forEach(function(h) {
+  h.addEventListener('click', function() {
+    var s = this.nextElementSibling;
+    if (s && s.classList.contains('section-content')) {
+      s.classList.toggle('collapsed');
+      var t = this.querySelector('.toggle');
+      if (t) t.textContent = s.classList.contains('collapsed') ? '\u25B6' : '\u25BC';
+    }
+  });
+});
+// Close sidebar on mobile nav click
+document.querySelectorAll('.nav-link').forEach(function(a) {
+  a.addEventListener('click', function() {
+    if (window.innerWidth < 900) document.querySelector('.sidebar').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
