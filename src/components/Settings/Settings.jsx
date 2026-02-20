@@ -50,14 +50,22 @@ export default function Settings() {
 
   /* ---- Test connection ------------------------------------- */
   const handleTestConnection = useCallback(async () => {
-    setTestResult('Testing...');
+    if (!apiKey.trim() && !apiSecret.trim()) {
+      setTestResult('No API credentials entered. Testing server-side .env config...');
+    } else {
+      setTestResult('Testing...');
+    }
     try {
       await coinbaseREST.getAccounts();
-      setTestResult('Connected successfully!');
+      if (!apiKey.trim() && !apiSecret.trim()) {
+        setTestResult('Server .env connected (credentials not set in UI)');
+      } else {
+        setTestResult('Connected successfully!');
+      }
     } catch (err) {
       setTestResult(`Failed: ${err.message}`);
     }
-  }, []);
+  }, [apiKey, apiSecret]);
 
   /* ---- Reset paper portfolio ------------------------------- */
   const handleResetPaper = useCallback(() => {
@@ -141,6 +149,10 @@ export default function Settings() {
           {/* Connection */}
           <div className="settings-section">
             <div className="settings-section-title">Connection</div>
+            <p className="settings-hint">
+              API credentials are loaded from the server-side <code>.env</code> file.
+              These fields save to localStorage for reference only.
+            </p>
             <div className="settings-field">
               <label className="settings-field-label">API Key</label>
               <input
@@ -148,7 +160,7 @@ export default function Settings() {
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter API key"
+                placeholder="Configured in .env"
               />
             </div>
             <div className="settings-field">
@@ -158,7 +170,7 @@ export default function Settings() {
                 type="password"
                 value={apiSecret}
                 onChange={(e) => setApiSecret(e.target.value)}
-                placeholder="Enter API secret"
+                placeholder="Configured in .env"
               />
             </div>
             <div className="settings-field-row">
@@ -166,7 +178,7 @@ export default function Settings() {
                 Test Connection
               </button>
               {testResult && (
-                <span style={{ fontSize: 11, color: testResult.includes('success') ? 'var(--bullish)' : 'var(--bearish)' }}>
+                <span className="settings-test-result" style={{ color: testResult.includes('Failed') ? 'var(--bearish)' : 'var(--bullish)' }}>
                   {testResult}
                 </span>
               )}
@@ -180,8 +192,20 @@ export default function Settings() {
           {/* Paper Trading */}
           <div className="settings-section">
             <div className="settings-section-title">Paper Trading</div>
+            <div className="settings-paper-balance">
+              <span className="settings-paper-balance-label">Current Balance</span>
+              <span className={`settings-paper-balance-value ${paperPortfolio.balance >= paperPortfolio.startingBalance ? 'bullish' : 'bearish'}`}>
+                ${(paperPortfolio.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+              <span className="settings-paper-balance-sub">
+                Starting: ${(paperPortfolio.startingBalance || 25000).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                {' | '}
+                P&L: {((paperPortfolio.balance || 0) - (paperPortfolio.startingBalance || 25000)) >= 0 ? '+' : ''}
+                ${((paperPortfolio.balance || 0) - (paperPortfolio.startingBalance || 25000)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
             <div className="settings-field">
-              <label className="settings-field-label">Starting Balance (USD)</label>
+              <label className="settings-field-label">Reset Balance To (USD)</label>
               <input
                 className="settings-field-input"
                 type="number"

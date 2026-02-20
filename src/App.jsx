@@ -12,6 +12,7 @@ import OrderEntry       from './components/OrderEntry/OrderEntry';
 import Positions        from './components/Positions/Positions';
 import TradeLog         from './components/TradeLog/TradeLog';
 import Settings         from './components/Settings/Settings';
+import Toasts           from './components/Toasts/Toasts';
 import AIAssistant      from './components/AIAssistant/AIAssistant';
 import Backtest         from './components/Backtest/Backtest';
 import AlertManager     from './components/AlertManager/AlertManager';
@@ -210,6 +211,9 @@ export default function App() {
 
       {/* ====== Settings Slide-out (always mounted, self-manages visibility) ====== */}
       <Settings />
+
+      {/* ====== Toast Notifications ====== */}
+      <Toasts />
     </div>
   );
 }

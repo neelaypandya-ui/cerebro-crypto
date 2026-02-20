@@ -277,3 +277,58 @@
   color: var(--bearish);
   margin-top: 4px;
 }
+
+/* ---- Hint text --------------------------------------------- */
+.settings-hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+
+.settings-hint code {
+  background: rgba(108, 99, 255, 0.1);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+/* ---- Test result text -------------------------------------- */
+.settings-test-result {
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* ---- Paper balance display --------------------------------- */
+.settings-paper-balance {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.settings-paper-balance-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.4px;
+}
+
+.settings-paper-balance-value {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.settings-paper-balance-value.bullish { color: var(--bullish); }
+.settings-paper-balance-value.bearish { color: var(--bearish); }
+
+.settings-paper-balance-sub {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
