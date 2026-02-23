@@ -1,96 +1,77 @@
-import { useMemo } from 'react';
-import useStore from '../../store';
-import { REGIMES } from '../../config/constants';
-import { STRATEGY_REGISTRY } from '../../strategies';
-import BotMasterControls from './BotMasterControls';
-import StrategyCard from './StrategyCard';
-import ScalpSessionScorecard from './ScalpSessionScorecard';
-import './StrategyControls.css';
-
 /* ============================================================
-   StrategyControls — Bot Control & Strategy Management
+   StrategyControls — HYDRA + VIPER Dashboard
    ============================================================
-   Redesigned with accordion cards grouped by regime,
-   BotMasterControls at top, and ScalpSessionScorecard.
+   Tab switcher between HYDRA and VIPER strategy panels.
+   VIPER tab only visible when viperEnabled is true.
    ============================================================ */
 
-// Group strategies by regime from the registry
-const REGIME_GROUPS = {
-  [REGIMES.BULLISH]: { label: 'Bullish Strategies', strategies: [] },
-  [REGIMES.CHOPPY]:  { label: 'Choppy / Range Strategies', strategies: [] },
-};
-
-// Build groups from registry
-for (const [key, strat] of Object.entries(STRATEGY_REGISTRY)) {
-  for (const regime of strat.meta.regimes || []) {
-    if (REGIME_GROUPS[regime]) {
-      REGIME_GROUPS[regime].strategies.push({ key, meta: strat.meta });
-    }
-  }
-}
+import { useState, useEffect } from 'react';
+import useStore from '../../store';
+import HydraControls from '../HydraControls';
+import ViperControls from '../ViperControls';
 
 export default function StrategyControls() {
-  const currentRegime = useStore((s) => s.currentRegime);
-  const activeStrategies = useStore((s) => s.activeStrategies);
+  const viperEnabled = useStore((s) => s.viperEnabled);
+  const [activeTab, setActiveTab] = useState('hydra');
 
-  /* ---- Sorted regime groups: current regime first ---- */
-  const sortedGroups = useMemo(() => {
-    const entries = Object.entries(REGIME_GROUPS);
-    // Put current regime's group first
-    entries.sort(([a], [b]) => {
-      if (a === currentRegime) return -1;
-      if (b === currentRegime) return 1;
-      return 0;
-    });
-    return entries;
-  }, [currentRegime]);
+  // Auto-switch tabs when VIPER is enabled/disabled
+  useEffect(() => {
+    if (viperEnabled && activeTab !== 'viper') {
+      setActiveTab('viper');
+    } else if (!viperEnabled && activeTab === 'viper') {
+      setActiveTab('hydra');
+    }
+  }, [viperEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="strategy-container">
-      {/* Bot Master Controls */}
-      <BotMasterControls />
-
-      {/* Bearish Banner */}
-      {currentRegime === REGIMES.BEARISH && (
-        <div className="strategy-bearish-banner">
-          <span className="strategy-bearish-banner-icon">&#9888;</span>
-          <div>
-            <div className="strategy-bearish-banner-text">Capital Preservation Mode</div>
-            <div className="strategy-bearish-banner-sub">
-              All strategies are paused during bearish regime. No new positions will be opened.
-            </div>
-          </div>
+    <div>
+      {viperEnabled && (
+        <div style={{
+          display: 'flex',
+          gap: 0,
+          borderBottom: '1px solid #1e1e2e',
+          marginBottom: 0,
+        }}>
+          <button
+            onClick={() => setActiveTab('hydra')}
+            style={{
+              flex: 1,
+              padding: '6px 0',
+              background: activeTab === 'hydra' ? 'rgba(108, 99, 255, 0.1)' : 'transparent',
+              color: activeTab === 'hydra' ? '#6c63ff' : '#8888aa',
+              border: 'none',
+              borderBottom: activeTab === 'hydra' ? '2px solid #6c63ff' : '2px solid transparent',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '1px',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+            }}
+          >
+            HYDRA
+          </button>
+          <button
+            onClick={() => setActiveTab('viper')}
+            style={{
+              flex: 1,
+              padding: '6px 0',
+              background: activeTab === 'viper' ? 'rgba(0, 188, 212, 0.1)' : 'transparent',
+              color: activeTab === 'viper' ? '#00bcd4' : '#8888aa',
+              border: 'none',
+              borderBottom: activeTab === 'viper' ? '2px solid #00bcd4' : '2px solid transparent',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '1px',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+            }}
+          >
+            VIPER
+          </button>
         </div>
       )}
-
-      {/* Scalp Session Scorecard */}
-      <ScalpSessionScorecard />
-
-      {/* Strategy Accordion Groups */}
-      <div className="strategy-groups">
-        {sortedGroups.map(([regime, group]) => {
-          const isCurrent = regime === currentRegime;
-          return (
-            <div key={regime} className={`strategy-group ${isCurrent ? 'current' : 'other'}`}>
-              <div className={`strategy-group-header ${regime}`}>
-                <span className="strategy-group-dot" />
-                <span className="strategy-group-label">{group.label}</span>
-                {isCurrent && <span className="strategy-group-current-tag">ACTIVE</span>}
-              </div>
-              <div className="strategy-group-cards">
-                {group.strategies.map(({ key, meta }) => (
-                  <StrategyCard
-                    key={key}
-                    strategyKey={key}
-                    meta={meta}
-                    enabled={activeStrategies[key] || false}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {activeTab === 'hydra' && <HydraControls />}
+      {activeTab === 'viper' && viperEnabled && <ViperControls />}
     </div>
   );
 }

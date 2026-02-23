@@ -1,0 +1,513 @@
+/* ============================================================
+   HYDRA Controls — Styles
+   ============================================================ */
+
+.hydra-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+/* ---- Status Bar ---- */
+.hydra-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(108, 99, 255, 0.06);
+  border: 1px solid rgba(108, 99, 255, 0.15);
+  border-radius: 6px;
+}
+
+.hydra-status-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hydra-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.hydra-engine-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.hydra-engine-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.hydra-engine-badge.running {
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--bullish);
+}
+.hydra-engine-badge.running .hydra-engine-dot { background: var(--bullish); }
+
+.hydra-engine-badge.paused {
+  background: rgba(240, 180, 41, 0.12);
+  color: var(--warning-yellow);
+}
+.hydra-engine-badge.paused .hydra-engine-dot { background: var(--warning-yellow); }
+
+.hydra-engine-badge.idle {
+  background: rgba(136, 136, 170, 0.1);
+  color: var(--text-secondary);
+}
+.hydra-engine-badge.idle .hydra-engine-dot { background: var(--text-secondary); }
+
+.hydra-eval-ago {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.hydra-status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Toggle button */
+.hydra-toggle-btn {
+  position: relative;
+  width: 36px;
+  height: 18px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.hydra-toggle-btn.off { background: var(--border); }
+.hydra-toggle-btn.on { background: var(--bullish); }
+
+.hydra-toggle-knob {
+  position: absolute;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+}
+
+.hydra-toggle-btn.off .hydra-toggle-knob { left: 2px; }
+.hydra-toggle-btn.on .hydra-toggle-knob { left: 20px; }
+
+.hydra-stop-btn {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: rgba(255, 69, 96, 0.12);
+  color: var(--bearish);
+  border: 1px solid rgba(255, 69, 96, 0.3);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.hydra-stop-btn:hover { background: rgba(255, 69, 96, 0.25); }
+
+/* ---- Info Row ---- */
+.hydra-info-row {
+  display: flex;
+  gap: 10px;
+}
+
+.hydra-info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.hydra-info-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.hydra-info-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hydra-threshold-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hydra-threshold-slider {
+  flex: 1;
+  height: 3px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.hydra-threshold-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.hydra-threshold-value {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  min-width: 20px;
+  text-align: right;
+}
+
+/* ---- Bearish Banner ---- */
+.hydra-bearish-banner {
+  padding: 6px 10px;
+  background: rgba(255, 69, 96, 0.08);
+  border: 1px solid rgba(255, 69, 96, 0.2);
+  border-radius: 4px;
+  color: var(--bearish);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ---- Score Section (Gauge + Dimensions) ---- */
+.hydra-score-section {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.hydra-gauge-col {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.hydra-dims-col {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Score Gauge ---- */
+.hydra-gauge-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.hydra-gauge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hydra-gauge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.hydra-gauge-score {
+  font-size: 24px;
+  font-weight: 900;
+  transition: color 0.3s;
+}
+
+.hydra-gauge-max {
+  font-size: 9px;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.hydra-gauge-ready {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--bullish);
+  text-align: center;
+  animation: hydra-ready-pulse 1.5s ease infinite;
+}
+
+@keyframes hydra-ready-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes hydra-gauge-pulse-anim {
+  0% { r: 58; opacity: 0.5; }
+  50% { r: 62; opacity: 0.2; }
+  100% { r: 58; opacity: 0.5; }
+}
+
+.hydra-gauge-pulse {
+  animation: hydra-gauge-pulse-anim 1.5s ease infinite;
+}
+
+.hydra-score-needed {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ---- Dimension Breakdown ---- */
+.hydra-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hydra-dimensions-empty {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 10px 0;
+}
+
+.hydra-dim-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hydra-dim-label {
+  width: 70px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hydra-dim-key {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.hydra-dim-name {
+  font-size: 8px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hydra-dim-bar-container {
+  flex: 1;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hydra-dim-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease, background-color 0.3s;
+  min-width: 2px;
+}
+
+.hydra-dim-score {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.hydra-dim-details {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hydra-dim-detail-line {
+  font-size: 8px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hydra-dim-detail-key {
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 4px;
+}
+
+/* ---- Session Heatmap ---- */
+.hydra-heatmap {
+  padding: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.hydra-heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.hydra-heatmap-title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.hydra-heatmap-current {
+  font-size: 9px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.hydra-heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2px;
+}
+
+.hydra-heatmap-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: transform 0.15s;
+  cursor: default;
+}
+
+.hydra-heatmap-cell.current {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.hydra-heatmap-hour {
+  font-size: 7px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hydra-heatmap-legend {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.hydra-heatmap-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8px;
+  color: var(--text-secondary);
+}
+
+.hydra-heatmap-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* ---- Activity Log ---- */
+.hydra-activity-section {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.hydra-activity-title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.hydra-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.hydra-activity-empty {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+}
+
+.hydra-activity-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.hydra-activity-entry.entry { background: rgba(0, 212, 170, 0.06); }
+.hydra-activity-entry.exit { background: rgba(108, 99, 255, 0.06); }
+.hydra-activity-entry.blocked { background: rgba(255, 69, 96, 0.06); }
+.hydra-activity-entry.adjust { background: rgba(240, 180, 41, 0.06); }
+
+.hydra-activity-time {
+  font-size: 9px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  font-family: monospace;
+}
+
+.hydra-activity-msg {
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hydra-activity-entry.entry .hydra-activity-msg { color: var(--bullish); }
+.hydra-activity-entry.blocked .hydra-activity-msg { color: var(--bearish); }
+.hydra-activity-entry.adjust .hydra-activity-msg { color: var(--warning-yellow); }

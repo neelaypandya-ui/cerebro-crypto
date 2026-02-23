@@ -1059,12 +1059,56 @@ self.onmessage = function (event) {
         break;
       }
 
+      case 'CALCULATE_MULTI': {
+        // Compute indicators for a specific timeframe label (used by VIPER multi-TF)
+        const { candles: mtfCandles, timeframeLabel, indicators: mtfIndicators, params: mtfParams } = payload;
+        const mtfResult = calculateIndicators(mtfCandles, mtfIndicators, mtfParams || {});
+        self.postMessage({
+          type: 'CALCULATE_MULTI_RESULT',
+          payload: { [timeframeLabel]: mtfResult },
+        });
+        break;
+      }
+
       case 'AGGREGATE': {
         const { candles1m, targetTimeframe } = payload;
         const aggregated = aggregateCandles(candles1m, targetTimeframe);
         self.postMessage({
           type: 'AGGREGATE_RESULT',
           payload: { timeframe: targetTimeframe, candles: aggregated },
+        });
+        break;
+      }
+
+      // ---- Scanner: per-pair indicator calculation ----
+      case 'CALCULATE_SCANNER': {
+        const { pair, candles: scanCandles, indicators: scanIndicators, params: scanParams, timeframeLabel } = payload;
+        const scanResult = calculateIndicators(scanCandles, scanIndicators, scanParams || {});
+        self.postMessage({
+          type: 'SCANNER_RESULT',
+          payload: { pair, indicators: scanResult, timeframeLabel: timeframeLabel || 'ONE_MINUTE' },
+        });
+        break;
+      }
+
+      // ---- Scanner: per-pair candle aggregation ----
+      case 'AGGREGATE_SCANNER': {
+        const { pair: aggPair, candles1m: aggCandles1m, targetTimeframe: aggTarget } = payload;
+        const aggResult = aggregateCandles(aggCandles1m, aggTarget);
+        self.postMessage({
+          type: 'SCANNER_AGGREGATE_RESULT',
+          payload: { pair: aggPair, timeframe: aggTarget, candles: aggResult },
+        });
+        break;
+      }
+
+      // ---- Scanner: per-pair regime detection ----
+      case 'SCANNER_REGIME': {
+        const { pair: regPair, ...regParams } = payload;
+        const regResult = detectRegime(regParams);
+        self.postMessage({
+          type: 'SCANNER_REGIME_RESULT',
+          payload: { pair: regPair, ...regResult },
         });
         break;
       }

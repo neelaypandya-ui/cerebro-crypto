@@ -108,14 +108,8 @@ export const REGIMES = {
 // Strategy identifiers
 // ---------------------------------------------------------------------------
 export const STRATEGIES = {
-  MOMENTUM:              'momentum',
-  BREAKOUT:              'breakout',
-  VWAP_RECLAIM:          'vwap_reclaim',
-  MEAN_REVERSION:        'mean_reversion',
-  RANGE_SCALP:           'range_scalp',
-  MICRO_VWAP_SCALP:      'micro_vwap_scalp',
-  MOMENTUM_SPIKE_SCALP:  'momentum_spike_scalp',
-  ORDER_BOOK_IMBALANCE:  'order_book_imbalance',
+  HYDRA: 'hydra',
+  VIPER: 'viper',
 };
 
 // ---------------------------------------------------------------------------

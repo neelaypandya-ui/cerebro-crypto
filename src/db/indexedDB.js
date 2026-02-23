@@ -7,7 +7,7 @@
 import { openDB } from 'idb';
 
 const DB_NAME = 'cerebro-crypto';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 /** @type {import('idb').IDBPDatabase|null} */
 let dbInstance = null;
@@ -65,6 +65,12 @@ export async function initDB() {
       // ---- strategyPerformance store --------------------------------------
       if (!db.objectStoreNames.contains('strategyPerformance')) {
         db.createObjectStore('strategyPerformance', { keyPath: 'key' });
+      }
+
+      // ---- viperLedger store (v3) -----------------------------------------
+      if (!db.objectStoreNames.contains('viperLedger')) {
+        const viperLedger = db.createObjectStore('viperLedger', { keyPath: 'date' });
+        viperLedger.createIndex('timestamp', 'timestamp', { unique: false });
       }
     },
   });

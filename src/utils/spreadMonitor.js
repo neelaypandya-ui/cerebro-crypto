@@ -6,9 +6,9 @@
  * Spread health thresholds (as percentage).
  */
 const THRESHOLDS = {
-  GREEN: 0.03,   // < 0.03% = healthy
-  YELLOW: 0.08,  // 0.03% - 0.08% = caution
-  // > 0.08% = red (dangerous for scalping)
+  GREEN: 0.05,   // < 0.05% = healthy
+  YELLOW: 0.15,  // 0.05% - 0.15% = caution
+  // > 0.15% = red (dangerous for scalping)
 };
 
 /**

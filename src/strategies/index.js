@@ -1,25 +1,16 @@
 /* ============================================================
    Cerebro Crypto — Strategy Registry
+   ============================================================
+   HYDRA is the sole unified strategy. All prior strategies
+   (A through H) have been replaced.
    ============================================================ */
 
-import { cryptoMomentum } from './cryptoMomentum.js';
-import { breakout } from './breakout.js';
-import { vwapReclaim } from './vwapReclaim.js';
-import { meanReversion } from './meanReversion.js';
-import { rangeScalp } from './rangeScalp.js';
-import { microVwapScalp } from './microVwapScalp.js';
-import { momentumSpikeScalp } from './momentumSpikeScalp.js';
-import { orderBookImbalanceScalp } from './orderBookImbalanceScalp.js';
+import { hydra } from './hydra/index.js';
+import { viper } from './viper/index.js';
 
 export const STRATEGY_REGISTRY = {
-  momentum: cryptoMomentum,
-  breakout: breakout,
-  vwap_reclaim: vwapReclaim,
-  mean_reversion: meanReversion,
-  range_scalp: rangeScalp,
-  micro_vwap_scalp: microVwapScalp,
-  momentum_spike_scalp: momentumSpikeScalp,
-  order_book_imbalance: orderBookImbalanceScalp,
+  hydra,
+  viper,
 };
 
 export function getStrategy(key) {

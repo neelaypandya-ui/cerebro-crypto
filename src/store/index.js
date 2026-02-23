@@ -130,6 +130,69 @@ const useStore = create((set, get) => ({
   lastEngineEval: null,     // timestamp of last evaluation
   signalHistory: [],        // Last 200 signals for persistence
 
+  // ---- VIPER State -------------------------------------------------------
+  viperEnabled: lsGet('viperEnabled', false),
+  viperActiveMode: null,         // null | 'STRIKE' | 'COIL' | 'LUNGE'
+  viperModeScores: null,         // { STRIKE, COIL, LUNGE } from edge detector
+  viperRatchetLevel: 'NORMAL',   // NORMAL | PROTECTED | PRESERVATION | LOCKED | RECOVERY
+  viperDailyPnL: 0,
+  viperDailyHighPnL: 0,
+  viperDailyTrades: 0,
+  viperSettings: lsGet('viper_settings', {
+    enabled: false,
+    edgeDetectorIntervalMin: 15,
+    strikeCooldownSec: 90,
+    strikeMaxConsecutiveWins: 3,
+    coilMaxPositions: 2,
+    lungeMaxPositions: 1,
+    ratchetEnabled: true,
+    overnightCutoffHourUTC: 5,
+    dailyPnLTarget: 0.15,
+    maxDailyLossPct: 0.5,
+    performanceLedgerEnabled: true,
+    capitalSplitPct: 40,
+  }),
+  viperActivity: [],             // Last 30 events
+  viperPerformanceLedger: lsGet('viper_performance_ledger', []),
+  viperReplacementThreat: 'ACTIVE', // DOMINANT | ACTIVE | WARNING | CRITICAL
+  allocationConfig: lsGet('allocation_config', { hydra: 60, viper: 40 }),
+
+  // ---- HYDRA State -------------------------------------------------------
+  hydraScore: null,           // Current HYDRA score result
+  hydraDimensions: null,      // { d1, d2, d3, d4, d5 } last dimension breakdown
+  hydraEntryThreshold: lsGet('hydra_entry_threshold', 80),
+  hydraSettings: lsGet('hydra_settings', {
+    entryThreshold: 80,
+    riskPerTrade: 0.01,
+    maxPositionPct: 0.08,
+    exitScoreThreshold: 40,
+    signalExpirySec: 20,
+    autoCalibrate: true,
+    consecutiveLossPause: 3,
+    consecutiveLossPauseMin: 15,
+    sessionWeight: 1.0,
+  }),
+  hydraActivity: [],          // Last 20 HYDRA events
+  hydraTradeCount: 0,         // Trades since last calibration check
+
+  // ---- Scanner (Multi-Pair) -----------------------------------------------
+  scannerPairs: lsGet('scannerPairs', ['BTC-USD', 'ETH-USD', 'SOL-USD', 'DOGE-USD', 'XRP-USD']),
+  scannerCandles: {},       // { 'BTC-USD': { ONE_MINUTE: [...], FIVE_MINUTE: [...] } }
+  scannerIndicators: {},    // { 'BTC-USD': { ema9: [...], rsi: [...], ... } }
+  scannerOrderBooks: {},    // { 'BTC-USD': { bids: [], asks: [], spread: 0 } }
+  scannerTradeFlow: {},     // { 'BTC-USD': { buyVolume, sellVolume, ratio } }
+  scannerRegimes: {},       // { 'BTC-USD': 'bullish' }
+  scannerViperModes: {},    // { 'BTC-USD': 'STRIKE', 'SOL-USD': 'LUNGE' }
+  scannerEnabled: lsGet('scannerEnabled', true),
+  maxConcurrentPositions: lsGet('maxConcurrentPositions', 3),
+
+  // ---- HYDRA Daily Loss Limit -------------------------------------------
+  hydraDailyPnL: 0,
+  hydraDailyLossLimit: lsGet('hydraDailyLossLimit', -1.5), // % of portfolio
+
+  // ---- Fee Tier ---------------------------------------------------------
+  feeTier: null, // { taker_fee_rate, maker_fee_rate } from getTransactionsSummary
+
   // ---- UI State -----------------------------------------------------------
   settingsOpen: false,
   aiPanelOpen: false,
@@ -264,7 +327,7 @@ const useStore = create((set, get) => ({
   setRegime: (regime, timestamp) =>
     set((s) => ({
       currentRegime: regime,
-      regimeHistory: [...s.regimeHistory, { regime, timestamp: timestamp || Date.now() }],
+      regimeHistory: [...s.regimeHistory, { regime, timestamp: timestamp || Date.now() }].slice(-100),
     })),
 
   // ---- Positions & Orders -------------------------------------------------
@@ -325,7 +388,7 @@ const useStore = create((set, get) => ({
           message: toast.message,
           timestamp: toast.timestamp || Date.now(),
         },
-      ],
+      ].slice(-20),
     })),
 
   removeToast: (id) =>
@@ -337,7 +400,7 @@ const useStore = create((set, get) => ({
     set((s) => ({ alerts: [...s.alerts, alert] })),
 
   addAlertLog: (entry) =>
-    set((s) => ({ alertLog: [...s.alertLog, entry] })),
+    set((s) => ({ alertLog: [...s.alertLog, entry].slice(-200) })),
 
   // ---- UI State -----------------------------------------------------------
   toggleSettings: () => set((s) => ({ settingsOpen: !s.settingsOpen })),
@@ -407,6 +470,90 @@ const useStore = create((set, get) => ({
       strategySignals: { ...s.strategySignals, [strategy]: signal },
     })),
 
+  // ---- VIPER State ----------------------------------------------------
+  setViperEnabled: (enabled) => {
+    lsSet('viperEnabled', enabled);
+    set({ viperEnabled: enabled });
+  },
+
+  setViperActiveMode: (mode) => set({ viperActiveMode: mode }),
+
+  setViperModeScores: (scores) => set({ viperModeScores: scores }),
+
+  setViperRatchetLevel: (level) => set({ viperRatchetLevel: level }),
+
+  updateViperDailyPnL: (pnl) =>
+    set((s) => {
+      const newPnL = s.viperDailyPnL + pnl;
+      const newHigh = Math.max(s.viperDailyHighPnL, newPnL);
+      return {
+        viperDailyPnL: newPnL,
+        viperDailyHighPnL: newHigh,
+        viperDailyTrades: s.viperDailyTrades + 1,
+      };
+    }),
+
+  resetViperDaily: () =>
+    set({
+      viperDailyPnL: 0,
+      viperDailyHighPnL: 0,
+      viperDailyTrades: 0,
+      viperRatchetLevel: 'NORMAL',
+    }),
+
+  setViperSettings: (settings) => {
+    const updated = { ...get().viperSettings, ...settings };
+    lsSet('viper_settings', updated);
+    set({ viperSettings: updated });
+  },
+
+  addViperActivity: (entry) =>
+    set((s) => ({
+      viperActivity: [
+        { ...entry, timestamp: Date.now() },
+        ...s.viperActivity,
+      ].slice(0, 30),
+    })),
+
+  setViperPerformanceLedger: (ledger) => {
+    lsSet('viper_performance_ledger', ledger);
+    set({ viperPerformanceLedger: ledger });
+  },
+
+  setViperReplacementThreat: (threat) => set({ viperReplacementThreat: threat }),
+
+  setAllocationConfig: (config) => {
+    lsSet('allocation_config', config);
+    set({ allocationConfig: config });
+  },
+
+  // ---- HYDRA State ----------------------------------------------------
+  setHydraScore: (score) => set({ hydraScore: score }),
+
+  setHydraDimensions: (dims) => set({ hydraDimensions: dims }),
+
+  setHydraEntryThreshold: (threshold) => {
+    const clamped = Math.max(65, Math.min(95, threshold));
+    lsSet('hydra_entry_threshold', clamped);
+    set({ hydraEntryThreshold: clamped });
+  },
+
+  setHydraSettings: (settings) => {
+    const updated = { ...get().hydraSettings, ...settings };
+    lsSet('hydra_settings', updated);
+    set({ hydraSettings: updated });
+  },
+
+  addHydraActivity: (entry) =>
+    set((s) => ({
+      hydraActivity: [
+        { ...entry, timestamp: Date.now() },
+        ...s.hydraActivity,
+      ].slice(0, 20),
+    })),
+
+  setHydraTradeCount: (count) => set({ hydraTradeCount: count }),
+
   // ---- Engine State ----------------------------------------------------
   setEngineStatus: (status) => set({ engineStatus: status }),
 
@@ -449,8 +596,181 @@ const useStore = create((set, get) => ({
       botRunning: false,
       activeStrategies: {},
       strategySignals: {},
+      hydraScore: null,
+      hydraDimensions: null,
+      viperActiveMode: null,
+      viperModeScores: null,
+      viperRatchetLevel: 'NORMAL',
+      scannerCandles: {},
+      scannerIndicators: {},
+      scannerOrderBooks: {},
+      scannerTradeFlow: {},
+      scannerRegimes: {},
+      scannerViperModes: {},
     });
   },
+
+  // ---- Scanner Actions --------------------------------------------------
+  setScannerPairs: (pairs) => {
+    lsSet('scannerPairs', pairs);
+    // Clean up data for removed pairs
+    const state = get();
+    const pairSet = new Set(pairs);
+    const cleanObj = (obj) => {
+      const cleaned = {};
+      for (const key of Object.keys(obj)) {
+        if (pairSet.has(key)) cleaned[key] = obj[key];
+      }
+      return cleaned;
+    };
+    set({
+      scannerPairs: pairs,
+      scannerCandles: cleanObj(state.scannerCandles),
+      scannerIndicators: cleanObj(state.scannerIndicators),
+      scannerOrderBooks: cleanObj(state.scannerOrderBooks),
+      scannerTradeFlow: cleanObj(state.scannerTradeFlow),
+      scannerRegimes: cleanObj(state.scannerRegimes),
+      scannerViperModes: cleanObj(state.scannerViperModes),
+    });
+  },
+
+  setScannerCandles: (pair, timeframe, candles) =>
+    set((s) => ({
+      scannerCandles: {
+        ...s.scannerCandles,
+        [pair]: {
+          ...(s.scannerCandles[pair] || {}),
+          [timeframe]: candles,
+        },
+      },
+    })),
+
+  addScannerCandle: (pair, timeframe, candle) =>
+    set((s) => {
+      const pairData = s.scannerCandles[pair] || {};
+      const existing = pairData[timeframe] || [];
+      let updated;
+      if (existing.length === 0) {
+        updated = [candle];
+      } else {
+        const last = existing[existing.length - 1];
+        if (last && last.timestamp === candle.timestamp) {
+          updated = [...existing.slice(0, -1), candle];
+        } else {
+          updated = [...existing, candle];
+        }
+      }
+      // Cap at 300 candles
+      if (updated.length > 300) {
+        updated = updated.slice(updated.length - 300);
+      }
+      return {
+        scannerCandles: {
+          ...s.scannerCandles,
+          [pair]: { ...pairData, [timeframe]: updated },
+        },
+      };
+    }),
+
+  setScannerIndicators: (pair, indicators) =>
+    set((s) => ({
+      scannerIndicators: {
+        ...s.scannerIndicators,
+        [pair]: indicators,
+      },
+    })),
+
+  setScannerOrderBook: (pair, data) =>
+    set((s) => {
+      const { type, updates } = data;
+      if (!updates || updates.length === 0) return {};
+
+      if (type === 'snapshot') {
+        const bids = [];
+        const asks = [];
+        for (const u of updates) {
+          const qty = parseFloat(u.new_quantity);
+          if (qty <= 0) continue;
+          const entry = [u.price_level, u.new_quantity];
+          if (u.side === 'bid') bids.push(entry);
+          else if (u.side === 'offer') asks.push(entry);
+        }
+        return {
+          scannerOrderBooks: {
+            ...s.scannerOrderBooks,
+            [pair]: { bids, asks, spread: 0 },
+          },
+        };
+      }
+
+      // Incremental update
+      const prev = s.scannerOrderBooks[pair] || { bids: [], asks: [], spread: 0 };
+      const bids = [...prev.bids];
+      const asks = [...prev.asks];
+
+      for (const u of updates) {
+        const arr = u.side === 'bid' ? bids : asks;
+        const qty = parseFloat(u.new_quantity);
+        const idx = arr.findIndex((lvl) => lvl[0] === u.price_level);
+
+        if (qty <= 0) {
+          if (idx !== -1) arr.splice(idx, 1);
+        } else if (idx !== -1) {
+          arr[idx] = [u.price_level, u.new_quantity];
+        } else {
+          arr.push([u.price_level, u.new_quantity]);
+        }
+      }
+
+      return {
+        scannerOrderBooks: {
+          ...s.scannerOrderBooks,
+          [pair]: { bids, asks, spread: 0 },
+        },
+      };
+    }),
+
+  setScannerTradeFlow: (pair, data) =>
+    set((s) => ({
+      scannerTradeFlow: {
+        ...s.scannerTradeFlow,
+        [pair]: { ...(s.scannerTradeFlow[pair] || {}), ...data },
+      },
+    })),
+
+  setScannerRegime: (pair, regime) =>
+    set((s) => ({
+      scannerRegimes: { ...s.scannerRegimes, [pair]: regime },
+    })),
+
+  setScannerViperMode: (pair, mode) =>
+    set((s) => ({
+      scannerViperModes: { ...s.scannerViperModes, [pair]: mode },
+    })),
+
+  setScannerEnabled: (enabled) => {
+    lsSet('scannerEnabled', enabled);
+    set({ scannerEnabled: enabled });
+  },
+
+  setMaxConcurrentPositions: (n) => {
+    lsSet('maxConcurrentPositions', n);
+    set({ maxConcurrentPositions: n });
+  },
+
+  // ---- HYDRA Daily Loss Limit -------------------------------------------
+  updateHydraDailyPnL: (pnl) =>
+    set((s) => ({ hydraDailyPnL: s.hydraDailyPnL + pnl })),
+
+  resetHydraDailyPnL: () => set({ hydraDailyPnL: 0 }),
+
+  setHydraDailyLossLimit: (pct) => {
+    lsSet('hydraDailyLossLimit', pct);
+    set({ hydraDailyLossLimit: pct });
+  },
+
+  // ---- Fee Tier ---------------------------------------------------------
+  setFeeTier: (data) => set({ feeTier: data }),
 
   // ---- Active Strategies (persisted) ------------------------------------
   setActiveStrategies: (strategies) => {

@@ -49,7 +49,7 @@ export function estimateSlippage(bookSide, orderSize, side = 'buy') {
     estimatedSlippage,
     slippagePct,
     avgFillPrice,
-    blocked: slippagePct > 0.15,
-    reason: slippagePct > 0.15 ? `Estimated slippage ${slippagePct.toFixed(3)}% exceeds 0.15% threshold` : null,
+    blocked: slippagePct > 0.30,
+    reason: slippagePct > 0.30 ? `Estimated slippage ${slippagePct.toFixed(3)}% exceeds 0.30% threshold` : null,
   };
 }

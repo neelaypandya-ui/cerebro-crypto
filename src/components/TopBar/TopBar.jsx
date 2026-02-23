@@ -13,6 +13,12 @@ export default function TopBar() {
   const portfolio = useStore((s) => s.portfolio);
   const wsStatus = useStore((s) => s.wsStatus);
   const toggleSettings = useStore((s) => s.toggleSettings);
+  const viperEnabled = useStore((s) => s.viperEnabled);
+  const viperActiveMode = useStore((s) => s.viperActiveMode);
+  const viperDailyPnL = useStore((s) => s.viperDailyPnL);
+  const scannerEnabled = useStore((s) => s.scannerEnabled);
+  const setScannerEnabled = useStore((s) => s.setScannerEnabled);
+  const scannerPairs = useStore((s) => s.scannerPairs);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmInput, setConfirmInput] = useState('');
@@ -61,6 +67,29 @@ export default function TopBar() {
           <span className="topbar-regime-dot" />
           {currentRegime}
         </div>
+
+        {/* Scanner badge */}
+        <div className="topbar-divider" />
+        <button
+          className={`topbar-scanner-badge ${scannerEnabled ? 'on' : 'off'}`}
+          onClick={() => setScannerEnabled(!scannerEnabled)}
+          title={scannerEnabled ? `Scanner ON: ${scannerPairs?.length || 0} pairs` : 'Scanner OFF — click to enable'}
+        >
+          SCAN {scannerEnabled ? (scannerPairs?.length || 0) : 'OFF'}
+        </button>
+
+        {/* VIPER badge */}
+        {viperEnabled && viperActiveMode && (
+          <>
+            <div className="topbar-divider" />
+            <div className={`topbar-viper-badge ${viperActiveMode}`}>
+              {viperActiveMode}
+              <span className="topbar-viper-pnl">
+                {viperDailyPnL >= 0 ? '+' : ''}${viperDailyPnL.toFixed(0)}
+              </span>
+            </div>
+          </>
+        )}
 
         <div className="topbar-divider" />
 

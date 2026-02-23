@@ -44,46 +44,54 @@ export default function useOrders() {
     // Get current risk settings (from store or defaults)
     const riskSettings = store.riskSettings || RISK_DEFAULTS;
 
-    // Check max positions
-    const openPositions = store.positions || [];
-    if (openPositions.length >= riskSettings.maxPositions) {
-      errors.push(`Maximum positions (${riskSettings.maxPositions}) reached`);
+    // Check max positions — use the higher scanner cap, not the legacy risk default
+    const openPositions = (store.positions || []).filter((p) => p.status !== 'closed');
+    const maxPos = store.maxConcurrentPositions || riskSettings.maxPositions || 3;
+    if (openPositions.length >= maxPos) {
+      errors.push(`Maximum positions (${maxPos}) reached`);
     }
 
-    // Check max daily trades
+    // Check max daily trades — scalpers need higher limits
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayTrades = (store.tradeLog || []).filter(
       (t) => t.entryTime >= todayStart.getTime()
     );
-    if (todayTrades.length >= riskSettings.maxTradesPerDay) {
-      errors.push(`Maximum daily trades (${riskSettings.maxTradesPerDay}) reached`);
+    const maxDaily = riskSettings.maxTradesPerDay || 10;
+    if (todayTrades.length >= maxDaily) {
+      errors.push(`Maximum daily trades (${maxDaily}) reached`);
     }
 
     // Check daily loss limit
     const todayPnL = todayTrades.reduce((sum, t) => sum + (t.realizedPnL || 0), 0);
-    if (todayPnL <= -riskSettings.maxDailyLossUSD) {
-      errors.push(`Daily loss limit ($${riskSettings.maxDailyLossUSD}) reached`);
+    if (todayPnL <= -(riskSettings.maxDailyLossUSD || 500)) {
+      errors.push(`Daily loss limit ($${riskSettings.maxDailyLossUSD || 500}) reached`);
     }
 
-    // Check pair cooldown
-    const pairTrades = todayTrades.filter((t) => t.pair === orderData.pair);
+    // Check pair cooldown — reduced for scalping (1 min instead of 10)
+    const pair = orderData.pair || store.activePair;
+    const pairTrades = todayTrades.filter((t) => t.pair === pair);
     if (pairTrades.length > 0) {
-      const lastTrade = pairTrades[0]; // sorted newest-first
-      const cooldownMs = riskSettings.pairCooldownMinutes * 60 * 1000;
+      const lastTrade = pairTrades[pairTrades.length - 1];
+      const cooldownMs = (orderData.strategy === 'viper' || orderData.strategy === 'hydra')
+        ? 60 * 1000  // 1 minute cooldown for automated strategies
+        : (riskSettings.pairCooldownMinutes || 10) * 60 * 1000;
       if (Date.now() - (lastTrade.exitTime || lastTrade.entryTime) < cooldownMs) {
-        errors.push(`Pair cooldown (${riskSettings.pairCooldownMinutes}min) active for ${orderData.pair}`);
+        const cooldownSec = Math.ceil(cooldownMs / 1000);
+        errors.push(`Pair cooldown (${cooldownSec}s) active for ${pair}`);
       }
     }
 
     // Check position size limit
     const balance = tradingMode === 'paper'
-      ? (store.paperBalance || 0)
-      : (store.portfolio || []).reduce((sum, a) => a.currency === 'USD' ? sum + a.available : sum, 0);
+      ? (store.paperPortfolio?.balance || store.paperBalance || 0)
+      : (store.portfolio?.availableCash || store.portfolio?.totalValue || 0);
 
-    const maxPositionValue = balance * (riskSettings.positionSizePct / 100);
-    if (orderData.notionalValue && orderData.notionalValue > maxPositionValue) {
-      errors.push(`Order value exceeds ${riskSettings.positionSizePct}% position size limit`);
+    if (balance > 0) {
+      const maxPositionValue = balance * ((riskSettings.positionSizePct || 5) / 100);
+      if (orderData.notionalValue && orderData.notionalValue > maxPositionValue) {
+        errors.push(`Order value ($${orderData.notionalValue.toFixed(2)}) exceeds ${riskSettings.positionSizePct || 5}% position size limit ($${maxPositionValue.toFixed(2)})`);
+      }
     }
 
     return { valid: errors.length === 0, errors };
@@ -202,7 +210,8 @@ export default function useOrders() {
     const fees = notionalValue * (TAKER_FEE_PCT / 10000); // TAKER_FEE_PCT is in basis points (0.6 = 0.006%)
 
     // Check paper balance
-    if (orderData.side === 'BUY' && notionalValue + fees > (store.paperBalance || 0)) {
+    const paperBal = store.paperPortfolio?.balance || store.paperBalance || 0;
+    if (orderData.side === 'BUY' && notionalValue + fees > paperBal) {
       if (typeof store.addToast === 'function') {
         store.addToast({ type: 'error', message: 'Insufficient paper balance', timestamp: Date.now() });
       }
@@ -247,9 +256,12 @@ export default function useOrders() {
     };
 
     // Update paper balance
-    if (typeof store.setPaperBalance === 'function') {
-      const cost = orderData.side === 'BUY' ? notionalValue + fees : -notionalValue + fees;
-      store.setPaperBalance((store.paperBalance || 0) - cost);
+    const currentPaperBal = store.paperPortfolio?.balance || store.paperBalance || 0;
+    const cost = orderData.side === 'BUY' ? notionalValue + fees : -notionalValue + fees;
+    if (typeof store.updatePaperPortfolio === 'function') {
+      store.updatePaperPortfolio({ balance: currentPaperBal - cost });
+    } else if (typeof store.setPaperBalance === 'function') {
+      store.setPaperBalance(currentPaperBal - cost);
     }
 
     // Add position to store

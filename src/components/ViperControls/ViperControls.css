@@ -1,0 +1,317 @@
+/* ============================================================
+   VIPER Controls — Strategy Panel Styles
+   ============================================================ */
+
+/* ---- Container ------------------------------------------- */
+.viper-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+/* ---- Status Bar ------------------------------------------ */
+.viper-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 188, 212, 0.06);
+  border: 1px solid rgba(0, 188, 212, 0.15);
+  border-radius: 6px;
+}
+
+.viper-engine-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #00bcd4;
+  background: rgba(0, 188, 212, 0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.viper-mode-indicator {
+  font-size: 12px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.viper-mode-indicator.STRIKE { color: #ff8c00; }
+.viper-mode-indicator.COIL { color: #00bcd4; }
+.viper-mode-indicator.LUNGE { color: #9c27b0; }
+.viper-mode-indicator.none { color: #8888aa; }
+
+.viper-toggle-btn {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.viper-toggle-btn.on {
+  background: rgba(0, 188, 212, 0.15);
+  color: #00bcd4;
+  border-color: rgba(0, 188, 212, 0.3);
+}
+
+.viper-toggle-btn.off {
+  background: rgba(136, 136, 170, 0.1);
+  color: #8888aa;
+  border-color: rgba(136, 136, 170, 0.2);
+}
+
+.viper-toggle-btn:hover {
+  opacity: 0.85;
+}
+
+.viper-stop-btn {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(255, 69, 96, 0.15);
+  color: #ff4560;
+  border: 1px solid rgba(255, 69, 96, 0.3);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.viper-stop-btn:hover {
+  opacity: 0.85;
+}
+
+/* ---- Mode Scores ----------------------------------------- */
+.viper-mode-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.viper-mode-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: rgba(18, 18, 26, 0.5);
+  transition: all 0.2s;
+}
+
+.viper-mode-row.active {
+  background: rgba(18, 18, 26, 0.8);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.viper-mode-icon {
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.viper-mode-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  width: 50px;
+  flex-shrink: 0;
+  color: #8888aa;
+}
+
+.viper-mode-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(30, 30, 46, 0.8);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.viper-mode-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.viper-mode-score {
+  font-size: 12px;
+  font-weight: 700;
+  width: 28px;
+  text-align: right;
+  color: #8888aa;
+  flex-shrink: 0;
+}
+
+/* ---- Ratchet Indicator ----------------------------------- */
+.viper-ratchet {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.viper-ratchet-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8888aa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.viper-ratchet-pnl {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.viper-ratchet-bar {
+  display: flex;
+  gap: 2px;
+  height: 22px;
+}
+
+.viper-ratchet-segment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.viper-ratchet-segment.active {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.viper-ratchet-segment-label {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.viper-ratchet-segment.active .viper-ratchet-segment-label {
+  opacity: 1;
+  color: #fff;
+}
+
+/* ---- Ledger Dots ----------------------------------------- */
+.viper-ledger-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.viper-ledger-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: default;
+  transition: transform 0.15s;
+}
+
+.viper-ledger-dot:hover {
+  transform: scale(1.3);
+}
+
+/* ---- Threat Badge ---------------------------------------- */
+.viper-threat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Section Headers ------------------------------------- */
+.viper-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.viper-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.viper-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8888aa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Activity Log ---------------------------------------- */
+.viper-activity-log {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.viper-activity-entry {
+  font-size: 10px;
+  color: #8888aa;
+  padding: 3px 6px;
+  background: rgba(18, 18, 26, 0.4);
+  border-radius: 3px;
+  line-height: 1.3;
+}
+
+.viper-activity-time {
+  color: #555;
+  margin-right: 4px;
+  font-size: 9px;
+}
+
+/* ---- Info Row -------------------------------------------- */
+.viper-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.viper-info-label {
+  font-size: 10px;
+  color: #8888aa;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.viper-info-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e2e2;
+}
+
+/* ---- Scrollbar ------------------------------------------- */
+.viper-activity-log::-webkit-scrollbar {
+  width: 3px;
+}
+
+.viper-activity-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.viper-activity-log::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}

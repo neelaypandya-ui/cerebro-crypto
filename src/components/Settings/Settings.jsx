@@ -28,6 +28,22 @@ export default function Settings() {
   const paperPortfolio = useStore((s) => s.paperPortfolio);
   const updatePaperPortfolio = useStore((s) => s.updatePaperPortfolio);
   const addToast = useStore((s) => s.addToast);
+  const hydraSettings = useStore((s) => s.hydraSettings);
+  const setHydraSettings = useStore((s) => s.setHydraSettings);
+  const viperEnabled = useStore((s) => s.viperEnabled);
+  const setViperEnabled = useStore((s) => s.setViperEnabled);
+  const viperSettings = useStore((s) => s.viperSettings);
+  const setViperSettings = useStore((s) => s.setViperSettings);
+  const allocationConfig = useStore((s) => s.allocationConfig);
+  const setAllocationConfig = useStore((s) => s.setAllocationConfig);
+  const scannerEnabled = useStore((s) => s.scannerEnabled);
+  const setScannerEnabled = useStore((s) => s.setScannerEnabled);
+  const scannerPairs = useStore((s) => s.scannerPairs);
+  const setScannerPairs = useStore((s) => s.setScannerPairs);
+  const maxConcurrentPositions = useStore((s) => s.maxConcurrentPositions);
+  const setMaxConcurrentPositions = useStore((s) => s.setMaxConcurrentPositions);
+  const hydraDailyLossLimit = useStore((s) => s.hydraDailyLossLimit);
+  const setHydraDailyLossLimit = useStore((s) => s.setHydraDailyLossLimit);
 
   /* ---- Local form state ----------------------------------- */
   const [apiKey, setApiKey] = useState(() => lsGet('cb_api_key', ''));
@@ -95,10 +111,14 @@ export default function Settings() {
     lsSave('aiProvider', aiProvider);
     lsSave('aiApiKey', aiApiKey);
     lsSave('aiModel', aiModel);
+    // HYDRA settings are saved directly via setHydraSettings in the form
+    // but also sync the entry threshold to the live engine
+    useStore.getState().setHydraEntryThreshold(hydraSettings.entryThreshold || 80);
     addToast({ type: 'success', message: 'Settings saved' });
   }, [
     apiKey, apiSecret, risk, defaultPair, defaultTimeframe,
     soundEnabled, aiProvider, aiApiKey, aiModel, setRiskSettings, addToast,
+    hydraSettings,
   ]);
 
   /* ---- Risk field helper ---------------------------------- */
@@ -223,25 +243,336 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Trading Defaults (Risk) */}
+          {/* HYDRA Settings */}
           <div className="settings-section">
-            <div className="settings-section-title">Trading Defaults</div>
-            {riskField('Position Size (%)', 'positionSizePct', 0.5)}
+            <div className="settings-section-title">HYDRA Strategy</div>
             <div className="settings-field">
-              <label className="settings-field-label">Stop-Loss Method</label>
-              <select
-                className="settings-field-select"
-                value={risk.stopLossMethod}
-                onChange={(e) => setRisk({ ...risk, stopLossMethod: e.target.value })}
-              >
-                <option value="percentage">Percentage</option>
-                <option value="atr">ATR-based</option>
-              </select>
+              <label className="settings-field-label">Entry Score Threshold (65–95)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={65}
+                max={95}
+                step={1}
+                value={hydraSettings.entryThreshold}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, entryThreshold: parseInt(e.target.value) || 80 })}
+              />
             </div>
-            {riskField('Stop-Loss (%)', 'stopLossPct', 0.1)}
-            {riskField('TP1 (R-multiple)', 'tp1R', 0.1)}
-            {riskField('TP2 (R-multiple)', 'tp2R', 0.1)}
-            {riskField('Trailing Stop (ATR)', 'trailingStopATR', 0.1)}
+            <div className="settings-field">
+              <label className="settings-field-label">Risk Per Trade (% of portfolio)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={0.25}
+                max={3}
+                step={0.25}
+                value={(hydraSettings.riskPerTrade * 100).toFixed(2)}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, riskPerTrade: (parseFloat(e.target.value) || 1) / 100 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Max Position Size (% hard cap)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={2}
+                max={15}
+                step={1}
+                value={(hydraSettings.maxPositionPct * 100).toFixed(0)}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, maxPositionPct: (parseFloat(e.target.value) || 8) / 100 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Exit Score Threshold (20–60)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={20}
+                max={60}
+                step={5}
+                value={hydraSettings.exitScoreThreshold}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, exitScoreThreshold: parseInt(e.target.value) || 40 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Signal Expiry (seconds)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={5}
+                max={60}
+                step={5}
+                value={hydraSettings.signalExpirySec}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, signalExpirySec: parseInt(e.target.value) || 20 })}
+              />
+            </div>
+            <div className="settings-toggle-row">
+              <span className="settings-toggle-label">Auto-Calibrate Threshold</span>
+              <button
+                className={`settings-toggle-btn ${hydraSettings.autoCalibrate ? 'on' : 'off'}`}
+                onClick={() => setHydraSettings({ ...hydraSettings, autoCalibrate: !hydraSettings.autoCalibrate })}
+              >
+                <span className="settings-toggle-knob" />
+              </button>
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Consecutive Loss Pause (trades)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={1}
+                max={5}
+                step={1}
+                value={hydraSettings.consecutiveLossPause}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, consecutiveLossPause: parseInt(e.target.value) || 3 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Session Score Weight (0.5–2.0)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={0.5}
+                max={2.0}
+                step={0.1}
+                value={hydraSettings.sessionWeight}
+                onChange={(e) => setHydraSettings({ ...hydraSettings, sessionWeight: parseFloat(e.target.value) || 1.0 })}
+              />
+            </div>
+          </div>
+
+          {/* VIPER Strategy Settings */}
+          <div className="settings-section">
+            <div className="settings-section-title">VIPER Strategy</div>
+            <div className="settings-toggle-row">
+              <span className="settings-toggle-label">Enable VIPER</span>
+              <button
+                className={`settings-toggle-btn ${viperEnabled ? 'on' : 'off'}`}
+                onClick={() => setViperEnabled(!viperEnabled)}
+              >
+                <span className="settings-toggle-knob" />
+              </button>
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Edge Detector Interval (min)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={5}
+                max={60}
+                step={5}
+                value={viperSettings.edgeDetectorIntervalMin}
+                onChange={(e) => setViperSettings({ edgeDetectorIntervalMin: parseInt(e.target.value) || 15 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">STRIKE Cooldown (sec)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={30}
+                max={300}
+                step={15}
+                value={viperSettings.strikeCooldownSec}
+                onChange={(e) => setViperSettings({ strikeCooldownSec: parseInt(e.target.value) || 90 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">STRIKE Max Consecutive Wins (pause trigger)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={2}
+                max={10}
+                step={1}
+                value={viperSettings.strikeMaxConsecutiveWins}
+                onChange={(e) => setViperSettings({ strikeMaxConsecutiveWins: parseInt(e.target.value) || 3 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">COIL Max Concurrent Positions</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={1}
+                max={4}
+                step={1}
+                value={viperSettings.coilMaxPositions}
+                onChange={(e) => setViperSettings({ coilMaxPositions: parseInt(e.target.value) || 2 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">LUNGE Max Concurrent Positions</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={1}
+                max={2}
+                step={1}
+                value={viperSettings.lungeMaxPositions}
+                onChange={(e) => setViperSettings({ lungeMaxPositions: parseInt(e.target.value) || 1 })}
+              />
+            </div>
+            <div className="settings-toggle-row">
+              <span className="settings-toggle-label">Ratchet System</span>
+              <button
+                className={`settings-toggle-btn ${viperSettings.ratchetEnabled ? 'on' : 'off'}`}
+                onClick={() => setViperSettings({ ratchetEnabled: !viperSettings.ratchetEnabled })}
+              >
+                <span className="settings-toggle-knob" />
+              </button>
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Overnight Cutoff Hour (UTC)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={0}
+                max={23}
+                step={1}
+                value={viperSettings.overnightCutoffHourUTC}
+                onChange={(e) => setViperSettings({ overnightCutoffHourUTC: parseInt(e.target.value) || 5 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Daily P&L Target (%)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={0.05}
+                max={1.0}
+                step={0.05}
+                value={viperSettings.dailyPnLTarget}
+                onChange={(e) => setViperSettings({ dailyPnLTarget: parseFloat(e.target.value) || 0.15 })}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Max Daily Loss (%)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={0.1}
+                max={2.0}
+                step={0.1}
+                value={viperSettings.maxDailyLossPct}
+                onChange={(e) => setViperSettings({ maxDailyLossPct: parseFloat(e.target.value) || 0.5 })}
+              />
+            </div>
+            <div className="settings-toggle-row">
+              <span className="settings-toggle-label">Performance Ledger</span>
+              <button
+                className={`settings-toggle-btn ${viperSettings.performanceLedgerEnabled ? 'on' : 'off'}`}
+                onClick={() => setViperSettings({ performanceLedgerEnabled: !viperSettings.performanceLedgerEnabled })}
+              >
+                <span className="settings-toggle-knob" />
+              </button>
+            </div>
+          </div>
+
+          {/* Multi-Pair Scanner */}
+          <div className="settings-section">
+            <div className="settings-section-title">Multi-Pair Scanner</div>
+            <p className="settings-hint">
+              Scans top pairs simultaneously for HYDRA and VIPER trade opportunities on 1m candles.
+            </p>
+            <div className="settings-toggle-row">
+              <span className="settings-toggle-label">Scanner Enabled</span>
+              <button
+                className={`settings-toggle-btn ${scannerEnabled ? 'on' : 'off'}`}
+                onClick={() => setScannerEnabled(!scannerEnabled)}
+              >
+                <span className="settings-toggle-knob" />
+              </button>
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Scanner Pairs (max 5)</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                {DEFAULT_PAIRS.slice(0, 10).map((pair) => {
+                  const isSelected = scannerPairs.includes(pair);
+                  const isDisabled = !isSelected && scannerPairs.length >= 5;
+                  return (
+                    <button
+                      key={pair}
+                      className={`settings-btn ${isSelected ? 'success' : ''}`}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: 11,
+                        opacity: isDisabled ? 0.4 : 1,
+                        cursor: isDisabled ? 'not-allowed' : 'pointer',
+                      }}
+                      disabled={isDisabled}
+                      onClick={() => {
+                        if (isSelected) {
+                          setScannerPairs(scannerPairs.filter((p) => p !== pair));
+                        } else if (scannerPairs.length < 5) {
+                          setScannerPairs([...scannerPairs, pair]);
+                        }
+                      }}
+                    >
+                      {pair.replace('-USD', '')}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">Max Concurrent Positions (1–5)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={1}
+                max={5}
+                step={1}
+                value={maxConcurrentPositions}
+                onChange={(e) => setMaxConcurrentPositions(Math.max(1, Math.min(5, parseInt(e.target.value) || 3)))}
+              />
+            </div>
+            <div className="settings-field">
+              <label className="settings-field-label">HYDRA Daily Loss Limit (% of portfolio, negative)</label>
+              <input
+                className="settings-field-input"
+                type="number"
+                min={-5}
+                max={-0.5}
+                step={0.5}
+                value={hydraDailyLossLimit}
+                onChange={(e) => setHydraDailyLossLimit(parseFloat(e.target.value) || -1.5)}
+              />
+            </div>
+            <p className="settings-hint" style={{ marginTop: 4, fontSize: 10 }}>
+              Refresh: 30s REST poll + real-time WebSocket. Pairs skip below $5M daily volume.
+            </p>
+          </div>
+
+          {/* Capital Allocation */}
+          <div className="settings-section">
+            <div className="settings-section-title">Capital Allocation</div>
+            <p className="settings-hint">
+              Split capital between HYDRA and VIPER. Auto-adjusts based on VIPER threat level.
+            </p>
+            <div className="settings-field">
+              <label className="settings-field-label">
+                HYDRA: {allocationConfig.hydra}% / VIPER: {allocationConfig.viper}%
+              </label>
+              <input
+                className="settings-field-input"
+                type="range"
+                min={30}
+                max={90}
+                step={5}
+                value={allocationConfig.hydra}
+                onChange={(e) => {
+                  const hydra = parseInt(e.target.value);
+                  setAllocationConfig({ hydra, viper: 100 - hydra });
+                }}
+                style={{ width: '100%' }}
+              />
+            </div>
+          </div>
+
+          {/* Risk Defaults */}
+          <div className="settings-section">
+            <div className="settings-section-title">Risk Defaults</div>
             {riskField('Max Positions', 'maxPositions', 1)}
             {riskField('Max Daily Loss (USD)', 'maxDailyLossUSD', 50)}
             {riskField('Max Trades/Day', 'maxTradesPerDay', 1)}

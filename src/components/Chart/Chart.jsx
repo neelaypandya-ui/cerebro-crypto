@@ -180,17 +180,17 @@ export default function Chart() {
         ctx.fillStyle = color; ctx.fillRect(x, bodyTop, barW, Math.max(bodyBot - bodyTop, 1));
       }
 
-      // Overlay indicators
+      // Overlay indicators — arrays are aligned 1:1 with candle data (raw number arrays)
       const drawLine = (dataArr, color, dashed) => {
         if (!dataArr || !dataArr.length) return;
         ctx.strokeStyle = color; ctx.lineWidth = 1;
         ctx.setLineDash(dashed ? [4, 3] : []);
         ctx.beginPath(); let started = false;
         for (let i = 0; i < visible.length; i++) {
-          const ts = visible[i].timestamp;
-          const pt = dataArr.find((d) => d && (d.time === ts || d.time === ts / 1000));
-          if (pt && pt.value != null) {
-            const y = priceToY(pt.value);
+          const dataIdx = startIdx + i;
+          const val = dataIdx < dataArr.length ? dataArr[dataIdx] : null;
+          if (val != null) {
+            const y = priceToY(val);
             if (!started) { ctx.moveTo(i * totalCandleW + view.candleWidth / 2, y); started = true; }
             else ctx.lineTo(i * totalCandleW + view.candleWidth / 2, y);
           }
@@ -202,10 +202,10 @@ export default function Chart() {
       if (chartIndicators.ema50) drawLine(indicators.ema50, '#9C27B0');
       if (chartIndicators.sma200) drawLine(indicators.sma200, '#FFFFFF', true);
       if (chartIndicators.vwap) drawLine(indicators.vwap, '#f0b429', true);
-      if (chartIndicators.bbands) {
-        drawLine(indicators.bollingerUpper || indicators.bbUpper, 'rgba(136,136,170,0.5)');
-        drawLine(indicators.bollingerLower || indicators.bbLower, 'rgba(136,136,170,0.5)');
-        drawLine(indicators.bollingerMiddle || indicators.bbMiddle, 'rgba(136,136,170,0.3)', true);
+      if (chartIndicators.bbands && indicators.bbands) {
+        drawLine(indicators.bbands.upper, 'rgba(136,136,170,0.5)');
+        drawLine(indicators.bbands.lower, 'rgba(136,136,170,0.5)');
+        drawLine(indicators.bbands.middle, 'rgba(136,136,170,0.3)', true);
       }
 
       // Price axis
@@ -299,15 +299,24 @@ export default function Chart() {
           if (!arr || !arr.length) return;
           ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.beginPath(); let started = false;
           for (let i = 0; i < visible.length; i++) {
-            const ts = visible[i].timestamp;
-            const pt = arr.find((d) => d && (d.time === ts || d.time === ts / 1000));
-            if (pt && pt.value != null) {
-              const y = H * (1 - (pt.value - mn) / ((mx - mn) || 1));
+            const dataIdx = startIdx + i;
+            const val = dataIdx < arr.length ? arr[dataIdx] : null;
+            if (val != null) {
+              const y = H * (1 - (val - mn) / ((mx - mn) || 1));
               if (!started) { ctx.moveTo(i * totalCandleW + view.candleWidth / 2, y); started = true; }
               else ctx.lineTo(i * totalCandleW + view.candleWidth / 2, y);
             }
           }
           ctx.stroke();
+        };
+        // Helper to find min/max of a raw number array within the visible range
+        const rangeOf = (arr) => {
+          let mn = Infinity, mx = -Infinity;
+          for (let i = 0; i < visible.length; i++) {
+            const v = arr[startIdx + i];
+            if (v != null) { if (v < mn) mn = v; if (v > mx) mx = v; }
+          }
+          return [mn, mx];
         };
         if (lowerKey === 'rsi') {
           ctx.strokeStyle = 'rgba(108,99,255,0.15)'; ctx.lineWidth = 0.5; ctx.setLineDash([3, 3]);
@@ -318,22 +327,28 @@ export default function Chart() {
           ctx.fillStyle = COLORS.textSecondary; ctx.font = '9px monospace'; ctx.textAlign = 'left';
           ctx.fillText('70', chartW + 4, H * 0.3 + 3); ctx.fillText('30', chartW + 4, H * 0.7 + 3);
         } else if (lowerKey === 'macd') {
+          const macdData = indicators.macd;
+          const macdLine = macdData ? (macdData.macd || []) : [];
+          const signalLine = macdData ? (macdData.signal || []) : [];
+          const histLine = macdData ? (macdData.histogram || []) : [];
           let mn = Infinity, mx = -Infinity;
-          const all = [...(indicators.macd || []), ...(indicators.macdSignal || []), ...(indicators.macdHistogram || [])];
-          for (const d of all) if (d && d.value != null) { if (d.value < mn) mn = d.value; if (d.value > mx) mx = d.value; }
+          for (const arr of [macdLine, signalLine, histLine]) {
+            const [aMn, aMx] = rangeOf(arr);
+            if (aMn < mn) mn = aMn; if (aMx > mx) mx = aMx;
+          }
           if (mn === Infinity) { mn = -1; mx = 1; }
-          if (indicators.macdHistogram) {
+          if (histLine.length) {
             for (let i = 0; i < visible.length; i++) {
-              const ts = visible[i].timestamp;
-              const pt = indicators.macdHistogram.find((d) => d && (d.time === ts || d.time === ts / 1000));
-              if (pt && pt.value != null) {
-                const zY = H * (1 - (0 - mn) / ((mx - mn) || 1)), vY = H * (1 - (pt.value - mn) / ((mx - mn) || 1));
-                ctx.fillStyle = pt.value >= 0 ? COLORS.bullish : COLORS.bearish;
+              const dataIdx = startIdx + i;
+              const val = dataIdx < histLine.length ? histLine[dataIdx] : null;
+              if (val != null) {
+                const zY = H * (1 - (0 - mn) / ((mx - mn) || 1)), vY = H * (1 - (val - mn) / ((mx - mn) || 1));
+                ctx.fillStyle = val >= 0 ? COLORS.bullish : COLORS.bearish;
                 ctx.globalAlpha = 0.4; ctx.fillRect(i * totalCandleW, Math.min(zY, vY), view.candleWidth, Math.abs(vY - zY) || 1); ctx.globalAlpha = 1;
               }
             }
           }
-          drawIL(indicators.macd, '#2196F3', mn, mx); drawIL(indicators.macdSignal, '#FF9800', mn, mx);
+          drawIL(macdLine, '#2196F3', mn, mx); drawIL(signalLine, '#FF9800', mn, mx);
           ctx.fillStyle = COLORS.cardSurface; ctx.fillRect(chartW, 0, PRICE_AXIS_WIDTH, H);
           ctx.strokeStyle = COLORS.border; ctx.beginPath(); ctx.moveTo(chartW, 0); ctx.lineTo(chartW, H); ctx.stroke();
           ctx.fillStyle = COLORS.textSecondary; ctx.font = '9px monospace'; ctx.textAlign = 'left';
@@ -341,7 +356,10 @@ export default function Chart() {
         } else {
           const arr = indicators[lowerKey] || [];
           let mn = Infinity, mx = -Infinity;
-          for (const d of arr) if (d && d.value != null) { if (d.value < mn) mn = d.value; if (d.value > mx) mx = d.value; }
+          for (let i = 0; i < visible.length; i++) {
+            const v = arr[startIdx + i];
+            if (v != null) { if (v < mn) mn = v; if (v > mx) mx = v; }
+          }
           if (mn === Infinity) { mn = 0; mx = 1; }
           drawIL(arr, lowerKey === 'atr' ? '#FF9800' : '#9C27B0', mn, mx);
           ctx.fillStyle = COLORS.cardSurface; ctx.fillRect(chartW, 0, PRICE_AXIS_WIDTH, H);

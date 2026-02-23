@@ -146,7 +146,7 @@ h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-w
 <nav class="sidebar">
   <div class="sidebar-header">
     <h2>CEREBRO CRYPTO</h2>
-    <small>Documentation v1.0.2</small>
+    <small>Documentation v1.0.3</small>
   </div>
   <input type="text" id="search-input" placeholder="Search docs..." oninput="filterNav(this.value)">
   <a class="nav-link" href="#overview">Overview</a>
@@ -184,6 +184,10 @@ h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-w
   <a class="nav-link sub" href="#overlay-system">Overlay System</a>
   <a class="nav-link sub" href="#recent-trades-issue">Known Issue: recentTrades</a>
   <a class="nav-link" href="#strategies">Strategy &amp; Regime Detection</a>
+  <a class="nav-link sub" href="#hydra-engine">HYDRA Engine</a>
+  <a class="nav-link sub" href="#hydra-dimensions">5-D Scoring</a>
+  <a class="nav-link sub" href="#hydra-entry-exit">Entry &amp; Exit Logic</a>
+  <a class="nav-link sub" href="#hydra-settings">HYDRA Settings</a>
   <a class="nav-link" href="#risk">Risk Management</a>
   <a class="nav-link" href="#backtesting">Backtesting</a>
   <a class="nav-link" href="#scalp-dashboard">Scalp Dashboard</a>
@@ -232,7 +236,7 @@ h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-w
 <li>Technical indicators computed off-thread via Web Workers (EMA, RSI, MACD, BB, ATR, ADX, VWAP)</li>
 <li>Automated stop-loss / take-profit execution with trailing stops</li>
 <li>Market regime detection (Bullish / Choppy / Bearish)</li>
-<li>8 built-in trading strategies including 4 scalping strategies</li>
+<li>HYDRA unified strategy engine &mdash; 5-dimensional confluence scoring with self-calibrating thresholds</li>
 <li>Scalp Dashboard with spread monitoring, trade flow analysis, fee impact calculations</li>
 <li>Backtesting engine with equity curve visualization</li>
 <li>AI Assistant integration (Claude / OpenAI)</li>
@@ -273,8 +277,8 @@ h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-w
 │                   Browser (Port 3001)                     │
 │  ┌─────────────────────────────────────────────────────┐  │
 │  │              React Application                      │  │
-│  │  TopBar │ Chart │ OrderEntry │ Positions │ TradeLog  │  │
-│  │  Bottom Tabs: Backtest │ Alerts │ Scalp │ Guide     │  │
+│  │  TopBar │ Chart │ Hydra Controls │ OrderEntry         │  │
+│  │  Positions │ TradeLog │ Backtest │ Alerts │ Scalp    │  │
 │  │  Zustand Store ← Web Workers (indicators, backtest) │  │
 │  │  IndexedDB + localStorage (cache, trades, settings) │  │
 │  └─────────────────────────┬───────────────────────────┘  │
@@ -317,7 +321,16 @@ h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-w
     ├── hooks/                 8 custom hooks (market data, orders, positions...)
     ├── workers/               indicators.worker, backtest.worker
     ├── utils/                 11 modules (indicators, risk, formatters, scalp...)
-    ├── strategies/            8 strategies + registry (momentum, scalp, breakout...)
+    ├── strategies/
+    │   ├── index.js           Registry &mdash; exports HYDRA as sole strategy
+    │   └── hydra/
+    │       ├── index.js           Orchestrator: 5 dimensions &rarr; score &rarr; signal
+    │       ├── scoring.js         Aggregates dimension scores
+    │       ├── sizing.js          ATR-based sizing with score multiplier
+    │       ├── exitMonitor.js     Exit conditions (SL/TP/trail/score)
+    │       ├── selfCalibration.js Threshold adjustment on win rate
+    │       ├── sessionProfiles.js Per-pair UTC hour learning
+    │       └── dimensions/        D1-D5 scoring modules
     └── components/            15 directories
         ├── TopBar/            Logo, regime, portfolio stats, mode badge
         ├── Chart/             Custom HTML5 Canvas with indicators
@@ -325,10 +338,15 @@ h2 .toggle { float: right; color: var(--text-secondary); font-size: 14px; font-w
         ├── OrderBook/         Bid/ask depth with spread
         ├── OrderEntry/        Buy/Sell form with risk validation
         ├── Positions/         Open positions with live P&amp;L
-        ├── StrategyControls/  Strategy toggles + bot + scorecard
+        ├── HydraControls/     HYDRA unified strategy dashboard
+        │   ├── index.jsx          Main HYDRA panel layout
+        │   ├── ScoreGauge.jsx     Circular 0-100 composite score
+        │   ├── DimensionBreakdown.jsx  5 horizontal bars (D1-D5)
+        │   ├── ActivityLog.jsx    Last 8 HYDRA events
+        │   └── SessionHeatmap.jsx 24-hour UTC heatmap
         ├── TradeLog/          Virtualized history with export
         ├── AIAssistant/       Chat with market context
-        ├── Settings/          API keys, risk, WS status
+        ├── Settings/          API keys, risk, HYDRA settings, WS status
         ├── Backtest/          Strategy backtest with equity curve
         ├── AlertManager/      Price/indicator alerts
         ├── ScalpDashboard/    Spread, flow, analytics, fees
@@ -423,8 +441,8 @@ Payload: { iss: "cdp", sub: "&lt;API_KEY&gt;", nbf, exp: +120s, uri: "METHOD api
 
 <h3 id="store">Store (Zustand)</h3>
 <p><strong>File:</strong> <code>src/store/index.js</code> &mdash; Single global store with localStorage persistence.</p>
-<p><strong>Key state:</strong> wsStatus, tradingMode, activePair, watchlist, favorites, tickers, orderBook, candles, indicators, currentRegime, regimeHistory, positions, pendingOrders, portfolio, paperPortfolio, activeStrategies, botRunning, signals, riskSettings, alerts, chartIndicators, indicatorConfig</p>
-<p><strong>Key actions:</strong> updateTicker, addCandle, setIndicators, setRegime, addPosition, removePosition, toggleStrategy, emergencyStopAll, addToast</p>
+<p><strong>Key state:</strong> wsStatus, tradingMode, activePair, watchlist, favorites, tickers, orderBook, candles, indicators, currentRegime, regimeHistory, positions, pendingOrders, portfolio, paperPortfolio, activeStrategies, botRunning, signals, riskSettings, alerts, chartIndicators, indicatorConfig, <strong>hydraScore</strong>, <strong>hydraDimensions</strong>, <strong>hydraEntryThreshold</strong>, <strong>hydraSettings</strong>, <strong>hydraActivity</strong>, <strong>hydraTradeCount</strong></p>
+<p><strong>Key actions:</strong> updateTicker, addCandle, setIndicators, setRegime, addPosition, removePosition, toggleStrategy, emergencyStopAll, addToast, <strong>setHydraScore</strong>, <strong>setHydraDimensions</strong>, <strong>setHydraEntryThreshold</strong>, <strong>setHydraSettings</strong>, <strong>addHydraActivity</strong></p>
 
 <h3 id="services">Services</h3>
 <p><strong>coinbaseREST.js</strong> &mdash; Axios client, 15s timeout, auto-unwraps <code>.data</code>. Exposes: getProducts, getProductCandles, getAccounts, createOrder, cancelOrders, getWsAuth.</p>
@@ -445,7 +463,7 @@ Payload: { iss: "cdp", sub: "&lt;API_KEY&gt;", nbf, exp: +120s, uri: "METHOD api
 </table>
 
 <h3 id="ui-components">UI Components</h3>
-<p>15 component directories: <strong>TopBar</strong> (logo, regime, stats), <strong>Watchlist</strong> (18 pairs), <strong>Chart</strong> (Canvas), <strong>OrderBook</strong>, <strong>OrderEntry</strong>, <strong>Positions</strong>, <strong>StrategyControls</strong> (+StrategyCard, BotMasterControls, ScalpSessionScorecard), <strong>TradeLog</strong>, <strong>AIAssistant</strong>, <strong>Settings</strong>, <strong>Backtest</strong>, <strong>AlertManager</strong>, <strong>ScalpDashboard</strong> (+SpreadMonitor, TradeFlowBar, ScalpAnalytics, FeeImpactCalculator), <strong>IndicatorPicker</strong> (+IndicatorList, IndicatorConfig, PresetManager), <strong>Guide</strong> (+GuideSidebar, GuideContent, GuideSearch).</p>
+<p>15 component directories: <strong>TopBar</strong> (logo, regime, stats), <strong>Watchlist</strong> (18 pairs), <strong>Chart</strong> (Canvas), <strong>OrderBook</strong>, <strong>OrderEntry</strong>, <strong>Positions</strong>, <strong>HydraControls</strong> (ScoreGauge, DimensionBreakdown, ActivityLog, SessionHeatmap &mdash; HYDRA unified strategy dashboard), <strong>TradeLog</strong>, <strong>AIAssistant</strong>, <strong>Settings</strong> (includes HYDRA settings panel), <strong>Backtest</strong>, <strong>AlertManager</strong>, <strong>ScalpDashboard</strong> (+SpreadMonitor, TradeFlowBar, ScalpAnalytics, FeeImpactCalculator), <strong>IndicatorPicker</strong> (+IndicatorList, IndicatorConfig, PresetManager), <strong>Guide</strong> (+GuideSidebar, GuideContent, GuideSearch).</p>
 
 <h3 id="workers">Web Workers</h3>
 <p><strong>indicators.worker.js</strong> &mdash; EMA (9/21/50), SMA (200), RSI (14), MACD, BB, ATR, ADX, VWAP + regime detection.</p>
@@ -496,6 +514,7 @@ Payload: { iss: "cdp", sub: "&lt;API_KEY&gt;", nbf, exp: +120s, uri: "METHOD api
 <tr><td><strong>VWAP</strong></td><td>Daily reset</td><td>Volume-weighted avg price</td></tr>
 </table>
 <p>Users configure via <strong>IndicatorPicker</strong> with save/load presets.</p>
+<p><strong>HYDRA dependencies:</strong> StochRSI and OBV are included in <code>ALL_INDICATORS</code> and computed automatically for HYDRA&rsquo;s dimension scoring (D2: Momentum Quality uses StochRSI; D3: Volume Conviction uses OBV trend). These are always calculated when HYDRA is active, regardless of chart display toggles.</p>
 
 <h4>Extended Indicators (via IndicatorPicker)</h4>
 <table>
@@ -730,19 +749,80 @@ Coinbase REST &#9472;&#9658; useCoinbaseREST &#9472;&#9658;  (candles[tf])
 <tr><td><strong style="color:#f0b429">Choppy</strong></td><td>ADX &lt; 20, or price near SMA200 with narrow BB</td><td style="color:#f0b429">#f0b429</td></tr>
 <tr><td><strong style="color:#ff4560">Bearish</strong></td><td>Price &lt; SMA200, EMA9 &lt; EMA21, ADX &gt; 25</td><td style="color:#ff4560">#ff4560</td></tr>
 </table>
-<p><strong>Bearish regime disables all trading</strong> (capital preservation).</p>
+<p><strong>Bearish regime</strong> blocks all HYDRA entries as a capital preservation mechanism (regime override).</p>
 
-<h3>8 Built-in Strategies</h3>
+<h3 id="hydra-engine">HYDRA Unified Strategy Engine</h3>
+<p>HYDRA (Hybrid Unified Dynamic Risk Analyzer) replaces all 8 previous strategies with a single <strong>5-dimensional confluence scoring</strong> system that produces a composite score from 0-100.</p>
+<p><strong>Architecture:</strong> <code>src/strategies/hydra/</code></p>
+<pre><code>hydra/
+├── index.js              Orchestrator: runs all 5 dimensions &rarr; composite score &rarr; signal
+├── scoring.js            Aggregates dimension scores, applies session weight
+├── sizing.js             ATR-based position sizing with score-based multiplier
+├── exitMonitor.js        Monitors open positions for exit conditions
+├── selfCalibration.js    Adjusts entry threshold based on rolling win rate
+├── sessionProfiles.js    Per-pair UTC hour learning and scoring
+└── dimensions/
+    ├── trendAlignment.js       D1: Multi-Timeframe Trend Alignment
+    ├── momentumQuality.js      D2: Momentum Quality
+    ├── volumeConviction.js     D3: Volume Conviction
+    ├── microstructure.js       D4: Market Microstructure
+    └── sessionIntelligence.js  D5: Session Intelligence</code></pre>
+
+<h4 id="hydra-dimensions">5-Dimensional Confluence Scoring</h4>
+<p>Each dimension scores 0-20. The composite score is the sum of all five (0-100).</p>
 <table>
-<tr><th>Strategy</th><th>Category</th><th>Regimes</th><th>Description</th></tr>
-<tr><td><strong>Crypto Momentum</strong></td><td>Trend</td><td>Bullish</td><td>EMA9 crosses EMA21, RSI &gt; 50, volume surge</td></tr>
-<tr><td><strong>Breakout</strong></td><td>Trend</td><td>Bullish</td><td>Close above 20-bar high with volume</td></tr>
-<tr><td><strong>VWAP Reclaim</strong></td><td>Trend</td><td>Bullish</td><td>Price bounces off VWAP</td></tr>
-<tr><td><strong>Mean Reversion</strong></td><td>Mean Rev</td><td>Choppy</td><td>RSI &lt;30 or &gt;70 revert to mean</td></tr>
-<tr><td><strong>Range Scalp</strong></td><td>Scalp</td><td>Choppy</td><td>Buy lows, sell highs in S/R</td></tr>
-<tr><td><strong>Micro VWAP Scalp</strong></td><td>Scalp</td><td>Choppy</td><td>Scalp around VWAP on 1-5m</td></tr>
-<tr><td><strong>Momentum Spike</strong></td><td>Scalp</td><td>Choppy</td><td>Enter momentum burst, exit reversal</td></tr>
-<tr><td><strong>Order Book Imbalance</strong></td><td>Scalp</td><td>Choppy</td><td>Bid/ask imbalance signals</td></tr>
+<tr><th>Dimension</th><th>Score</th><th>Inputs</th><th>What It Measures</th></tr>
+<tr><td><strong>D1: Trend Alignment</strong></td><td>0-20</td><td>EMA alignment across 1m, 5m, 15m</td><td>Whether short, medium, and long trends agree</td></tr>
+<tr><td><strong>D2: Momentum Quality</strong></td><td>0-20</td><td>RSI shape, MACD, StochRSI, divergence</td><td>Strength and quality of current momentum</td></tr>
+<tr><td><strong>D3: Volume Conviction</strong></td><td>0-20</td><td>Volume vs avg, OBV trend, buy/sell flow</td><td>Whether volume supports the move</td></tr>
+<tr><td><strong>D4: Microstructure</strong></td><td>0-20</td><td>Order book imbalance, spread, VWAP</td><td>Real-time market structure health</td></tr>
+<tr><td><strong>D5: Session Intelligence</strong></td><td>0-20</td><td>Per-pair UTC hour, ATR volatility</td><td>Historical performance at this time of day</td></tr>
+</table>
+
+<h4 id="hydra-entry-exit">Entry Logic</h4>
+<ul>
+<li><strong>Entry threshold:</strong> Score &ge; 80 required (configurable 65-95)</li>
+<li><strong>Regime override:</strong> No entries during bearish regime regardless of score</li>
+<li><strong>Spread block:</strong> Spread &gt; 0.10% blocks entry regardless of score</li>
+<li><strong>Signal expiry:</strong> Signals expire after 20 seconds (configurable 5-60s)</li>
+</ul>
+
+<h4>Exit Logic</h4>
+<ul>
+<li><strong>Exit score monitor:</strong> If D1 + D2 + D3 drops below 40 (configurable 20-60), position closed immediately</li>
+<li><strong>Dynamic ATR-based targets:</strong>
+  <ul>
+    <li>TP1 = ATR &times; 1.2 &mdash; closes 50%, SL to break-even, trailing activated</li>
+    <li>TP2 = ATR &times; 2.5 &mdash; closes remaining position</li>
+    <li>Stop-loss = ATR &times; 1.5</li>
+    <li>Trailing stop = ATR &times; 0.8 (after TP1 hit)</li>
+  </ul>
+</li>
+<li><strong>Consecutive loss pause:</strong> After 3 consecutive losses (configurable 1-5), pauses new entries</li>
+</ul>
+
+<h4>Self-Calibrating Threshold</h4>
+<ul>
+<li>Win rate &lt; 40% over last 20 trades &rarr; raise threshold by +3 (more selective)</li>
+<li>Win rate &gt; 70% over last 20 trades &rarr; lower threshold by -2 (capture more)</li>
+<li>Threshold clamped to 65-95 range</li>
+<li>Can be toggled off for manual threshold control</li>
+</ul>
+
+<h4>Session Learning</h4>
+<p>HYDRA builds per-pair UTC hour profiles that track historical performance by time of day. D5 (Session Intelligence) uses these profiles to boost or penalize the composite score. Session weight is configurable (0.5x - 2.0x, default 1.0x).</p>
+
+<h4 id="hydra-settings">HYDRA Settings</h4>
+<table>
+<tr><th>Setting</th><th>Range</th><th>Default</th><th>Description</th></tr>
+<tr><td>Entry Score Threshold</td><td>65-95</td><td>80</td><td>Minimum composite score to enter</td></tr>
+<tr><td>Risk Per Trade</td><td>0.25-3%</td><td>1%</td><td>Portfolio risk per trade</td></tr>
+<tr><td>Max Position Size</td><td>2-15%</td><td>8%</td><td>Maximum position size as % of portfolio</td></tr>
+<tr><td>Exit Score Threshold</td><td>20-60</td><td>40</td><td>D1+D2+D3 below this triggers exit</td></tr>
+<tr><td>Signal Expiry</td><td>5-60s</td><td>20s</td><td>Time before unacted signal expires</td></tr>
+<tr><td>Auto-Calibrate</td><td>on/off</td><td>ON</td><td>Self-adjusting threshold on win rate</td></tr>
+<tr><td>Consecutive Loss Pause</td><td>1-5</td><td>3</td><td>Losses before pausing entries</td></tr>
+<tr><td>Session Score Weight</td><td>0.5-2.0</td><td>1.0</td><td>Multiplier for D5 contribution</td></tr>
 </table>
 </div>
 
@@ -760,6 +840,26 @@ Coinbase REST &#9472;&#9658; useCoinbaseREST &#9472;&#9658;  (candles[tf])
 <tr><td>pairCooldownMinutes</td><td>10</td><td>Same-pair cooldown</td></tr>
 </table>
 <p><strong>SL/TP flow:</strong> SL triggers &rarr; market close. TP1 (1.5R): close 50%, SL to breakeven, trailing. TP2 (3R): close rest.</p>
+
+<h3>HYDRA ATR-Based Position Sizing</h3>
+<p>HYDRA uses its own dynamic sizing in <code>src/strategies/hydra/sizing.js</code>:</p>
+<pre><code>positionSize = baseRisk / (stopDistance / entryPrice) &times; scoreMultiplier</code></pre>
+<p>Where: <code>baseRisk</code> = portfolio &times; risk% (default 1%), <code>stopDistance</code> = ATR &times; 1.5</p>
+<table>
+<tr><th>Score Range</th><th>Multiplier</th><th>Rationale</th></tr>
+<tr><td>80-84</td><td>0.75x</td><td>Minimum-confidence, conservative</td></tr>
+<tr><td>85-89</td><td>1.0x</td><td>Standard-confidence, full size</td></tr>
+<tr><td>90-94</td><td>1.25x</td><td>High-confidence, increased</td></tr>
+<tr><td>95-100</td><td>1.5x</td><td>Maximum-confidence, aggressive</td></tr>
+</table>
+<p>Final size capped at <code>maxPositionSize</code> (default 8% of portfolio).</p>
+<table>
+<tr><th>Target</th><th>ATR Multiplier</th><th>Description</th></tr>
+<tr><td>TP1</td><td>ATR &times; 1.2</td><td>Closes 50%, SL to break-even</td></tr>
+<tr><td>TP2</td><td>ATR &times; 2.5</td><td>Closes remaining position</td></tr>
+<tr><td>Stop-loss</td><td>ATR &times; 1.5</td><td>Initial stop distance</td></tr>
+<tr><td>Trailing</td><td>ATR &times; 0.8</td><td>Activated after TP1 hit</td></tr>
+</table>
 </div>
 
 <!-- BACKTESTING -->
@@ -784,22 +884,24 @@ Coinbase REST &#9472;&#9658; useCoinbaseREST &#9472;&#9658;  (candles[tf])
 <!-- DATABASE -->
 <h2 id="database">Database &amp; Persistence <span class="toggle">&#9660;</span></h2>
 <div class="section-content">
-<h3>IndexedDB</h3>
+<h3>IndexedDB (<code>cerebro-crypto</code>, v2)</h3>
 <table>
 <tr><th>Store</th><th>Key</th><th>Purpose</th></tr>
 <tr><td>trades</td><td>id</td><td>Live and backtest trades</td></tr>
 <tr><td>candles</td><td>auto</td><td>OHLCV cache per pair/timeframe</td></tr>
 <tr><td>paperTrades</td><td>id</td><td>Paper trading records</td></tr>
 <tr><td>alerts</td><td>id</td><td>Alert conditions</td></tr>
+<tr><td><strong>signals</strong></td><td>id</td><td>HYDRA signal records with dimension scores</td></tr>
+<tr><td><strong>strategyPerformance</strong></td><td>id</td><td>Per-strategy performance metrics for calibration</td></tr>
 </table>
 <h3>localStorage</h3>
-<p>tradingMode, activePair, watchlist, favorites, paperPortfolio, activeStrategies, riskSettings, indicatorConfig, indicatorPresets</p>
+<p>tradingMode, activePair, watchlist, favorites, paperPortfolio, activeStrategies, riskSettings, indicatorConfig, indicatorPresets, <strong>hydra_entry_threshold</strong>, <strong>hydra_settings</strong>, <strong>hydra_session_profiles</strong>, <strong>hydra_threshold</strong>, <strong>hydra_calibration_history</strong></p>
 </div>
 
 <!-- CONFIGURATION -->
 <h2 id="configuration">Configuration <span class="toggle">&#9660;</span></h2>
 <div class="section-content">
-<p><strong>constants.js:</strong> 18 pairs, 7 timeframes, WS URL, $25K balance, 0.05% slippage, 0.6% fee, risk defaults, colors, fee tiers.</p>
+<p><strong>constants.js:</strong> 18 pairs, 7 timeframes, WS URL, $25K balance, 0.05% slippage, 0.6% fee, risk defaults, colors, fee tiers. <code>STRATEGIES</code> contains single entry: <code>HYDRA</code>.</p>
 <p><strong>indicatorDefaults.js:</strong> Default indicator periods and display colors.</p>
 <p><strong>tickerProfiles.js:</strong> Per-pair decimal places and minimum order sizes.</p>
 </div>
@@ -885,6 +987,24 @@ Coinbase REST &#9472;&#9658; useCoinbaseREST &#9472;&#9658;  (candles[tf])
 <!-- CHANGELOG -->
 <h2 id="changelog">Changelog <span class="toggle">&#9660;</span></h2>
 <div class="section-content">
+<h3>v1.0.3 (2026-02-20)</h3>
+<ul>
+<li><strong>HYDRA unified strategy engine:</strong> Replaced all 8 individual strategies with a single 5-dimensional confluence scoring system</li>
+<li>Added 5 scoring dimensions: Trend Alignment, Momentum Quality, Volume Conviction, Microstructure, Session Intelligence</li>
+<li>Added self-calibrating entry threshold that adjusts based on rolling win rate</li>
+<li>Added ATR-based dynamic position sizing with score-based multiplier (0.75x-1.5x)</li>
+<li>Added dynamic ATR-based targets: TP1=ATR&times;1.2, TP2=ATR&times;2.5, Stop=ATR&times;1.5, Trail=ATR&times;0.8</li>
+<li>Added exit score monitor (D1+D2+D3 &lt; 40 triggers immediate close)</li>
+<li>Added per-pair UTC hour session learning and scoring profiles</li>
+<li>Added spread block (&gt;0.10% blocks regardless of score)</li>
+<li>Added HydraControls UI: ScoreGauge, DimensionBreakdown, ActivityLog, SessionHeatmap</li>
+<li>Upgraded IndexedDB to v2 with signals and strategyPerformance stores</li>
+<li>Added StochRSI and OBV to ALL_INDICATORS for HYDRA dimension scoring</li>
+<li>Added HYDRA localStorage keys for threshold, settings, session profiles, calibration</li>
+<li>Added Zustand slices: hydraScore, hydraDimensions, hydraEntryThreshold, hydraSettings, hydraActivity</li>
+<li>Replaced StrategyControls component with HydraControls</li>
+<li>Strategy count: 8 &rarr; 1 (HYDRA)</li>
+</ul>
 <h3>v1.0.2 (2026-02-19)</h3>
 <ul>
 <li><strong>Chart rewrite:</strong> DOM-created canvases for error isolation from React</li>
@@ -914,8 +1034,8 @@ Coinbase REST &#9472;&#9658; useCoinbaseREST &#9472;&#9658;  (candles[tf])
 </div>
 
 <div class="footer">
-<p>Generated by <strong>DoogieHowser</strong> documentation agent on 2026-02-19</p>
-<p>Last Updated: 2026-02-19 &mdash; Chart Mechanisms update</p>
+<p>Generated by <strong>DoogieHowser</strong> documentation agent on 2026-02-20</p>
+<p>Last Updated: 2026-02-20 &mdash; HYDRA unified strategy engine</p>
 </div>
 </div>
 
